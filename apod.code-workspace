@@ -1,0 +1,14 @@
+{
+    "folders": [
+        {
+            "path": "./"
+        },
+        {
+            "path": "/home/myron/akit"
+        }
+    ],
+    "settings": {
+        "python.pythonPath": "/home/myron/source/automationkit/_local/venv/bin/python",
+        "python.envFile": "/home/myron/source/automationkit/_local/development.env"
+    }
+}

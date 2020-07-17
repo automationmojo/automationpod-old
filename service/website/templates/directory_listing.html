@@ -1,0 +1,53 @@
+<html>
+    <head>
+        <title>{{ directory }}</title>
+        <meta charset="utf-8">
+        <!-- Turn Off Caching of This Page -->
+        <meta http-equiv="Cache-Control" content="no-store" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
+
+        <link type="text/css" rel="stylesheet" href="/static/styles/bootstrap-vue.css" />
+        
+        <style>
+            @font-face {
+                font-family: 'Material Icons';
+                font-style: normal;
+                font-weight: 400;
+                src: url(/static/fonts/2fcrYFNaTjcS6g4U3t-Y5ZjZjT5FdEJ140U2DJYC3mY.woff2) format('woff2');
+            }
+
+            .material-icons {
+                font-family: 'Material Icons';
+                font-weight: normal;
+                font-style: normal;
+                font-size: 24px;
+                line-height: 1;
+                letter-spacing: normal;
+                text-transform: none;
+                display: inline-block;
+                white-space: nowrap;
+                word-wrap: normal;
+                direction: ltr;
+                -webkit-font-feature-settings: 'liga';
+                -webkit-font-smoothing: antialiased;
+            }
+        </style>
+        
+    </head>
+    <body>
+        <h1>{{ directory }}</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th></th><th>Name</th><th>Last Modified</th><th>Size</th><th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% autoescape off %}
+                {{ directory_rows }}
+                {% endautoescape %}
+            </tbody>
+        </table>
+    </body>
+</html>

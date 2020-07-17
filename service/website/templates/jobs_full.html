@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Automation Pod - Jobs</title>
+        <meta charset="utf-8">
+        <!-- Turn Off Caching of This Page -->
+        <meta http-equiv="Cache-Control" content="no-store" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
+
+        <!-- Configure the ViewPort Size -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Load required Bootstrap and BootstrapVue CSS -->
+        <link type="text/css" rel="stylesheet" href="/static/styles/bootstrap.css" />
+        <link type="text/css" rel="stylesheet" href="/static/styles/bootstrap-vue.css" />
+
+        <!-- Load polyfills to support older browsers -->
+        <script src="/static/javascript/polyfill.js"></script>
+
+        <!-- Load Vue followed by BootstrapVue -->
+        <script src="/static/javascript/vue.js"></script>
+        <script src="/static/javascript/bootstrap-vue.js"></script>
+
+        <!-- Load Http Vue Loader -->
+        <script src="/static/javascript/http-vue-loader.js"></script>
+
+        <script src="/static/javascript/axios.js"></script>
+
+        <!-- Load the Components -->
+        <script src="/static/components/jobsviewer.js"></script>
+
+    </head>
+    <body>
+        <section id='section-header'>
+            <nav class="navbar navbar-light bg-light" style="padding-top: 10px">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">
+                            <h1>Automation Pod</h1>
+                        </a>
+                    </div>
+                    <div class="nav navbar-nav" style="padding-top: 10px">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary" onclick="window.location.href = '/';"> Summary </button>
+                            <button type="button" class="btn btn-primary" onclick="window.location.href = '/devices';"> Devices </button>
+                            <button type="button" class="btn btn-primary active"> Job Queue </button>
+                            <button type="button" class="btn btn-primary" onclick="window.location.href = '/results';"> Results </button>
+                        </div>
+                    </div>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#"><span class="glyphicon glyphicon-log-out"></span> Logout </a></li>
+                    </ul>
+                </div>
+            </nav>
+        </section>
+        <section id='section-body'>
+            <div id='application' style='width: 100%;'>
+                <job-viewer title="Job Queue"></job-viewer>
+            </div>
+            <!-- Load the Application-->
+            <script>
+                new window.Vue({
+                    el: '#application', 
+                    data: function() {
+                        var dobj = {
+                            username: "{{ username }}"
+                        };
+                        return dobj;
+                    },
+                    mounted () {
+                        
+                    }
+                });
+            </script>
+        </section>
+        <section id='section-footer'>
+        </section>
+    </body>
+</html>

@@ -1,0 +1,16 @@
+{
+    "name": "Test Landscape Configuration",
+    "entities": [
+        {
+            "label": "",
+            "role": "primary-cluster",
+            "classification": "cluster-node",
+            "contactpoint": {
+                "type": "system",
+                "host": "10.11.123.10",
+                "username": "root",
+                "password": "blah"
+            }
+        }
+    ]
+}

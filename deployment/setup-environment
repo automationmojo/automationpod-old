@@ -1,0 +1,127 @@
+#!/bin/bash
+
+# -------------------------------------------------------------------------------------------
+#                                 Setup all the Variables and Paths
+# -------------------------------------------------------------------------------------------
+echo "------------------------------------ VARIABLES ----------------------------------------"
+# Establish the base repository reference directory
+THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+REPOSITORY_DIR="$( dirname $THIS_DIR )"
+
+echo "THIS_DIR=$THIS_DIR"
+echo "REPOSITORY_DIR=$REPOSITORY_DIR"
+
+# Setup our local directory
+LOCAL_DIR="$REPOSITORY_DIR/_local"
+if [ ! -d $LOCAL_DIR ]; then
+    mkdir $LOCAL_DIR
+fi
+
+REQUIREMENTS_FILE="$REPOSITORY_DIR/requirements.txt"
+INITIALIZED_FILE="$LOCAL_DIR/initialized"
+VIRTUAL_ENV_DIR="$LOCAL_DIR/venv"
+
+echo "VIRTUAL_ENV_DIR=$REPOSITORY_DIR"
+
+DEV_ENV_FILE="$LOCAL_DIR/development.env"
+if [ ! -f $DEV_ENV_FILE ]; then
+    REPOSITORY_NAME="Automation Kit"
+    REPOSITORY_DIRECTORY="$REPOSITORY_DIR"
+    REPORT_PREFIX="akit"
+    DEVELOPER_MODE="TRUE"
+    PYTHONPATH="$REPOSITORY_DIRECTORY/packages:$REPOSITORY_DIRECTORY/service"
+fi
+echo "---------------------------------------------------------------------------------------"
+# -------------------------------------------------------------------------------------------
+#                                 Perform Reset if Required
+# -------------------------------------------------------------------------------------------
+
+if [ "$1" == "reset" ]; then
+    rm -fr $VIRTUAL_ENV_DIR
+    rm -f $INITIALIZED_FILE
+fi
+
+# -------------------------------------------------------------------------------------------
+#                                 System Package Installation
+# -------------------------------------------------------------------------------------------
+echo
+echo
+echo "-------------------------------- SYSTEM PACKAGES --------------------------------------"
+
+function ensure_apt_dependencies() {
+    echo "INSTALLING: $1"
+    read -a dependency_list <<< $1 # Split the dependency string on spaces into a bash array
+
+    for nxt_dep in "${dependency_list[@]}"
+    do
+        PCHK_OUTPUT="$(dpkg -s $nxt_dep)";
+        if [ "$(echo $?)" != 0 ]; then
+            echo "System Dependency ($nxt_dep): being installed"
+            sudo apt install $APT_DEPENDENCIES
+        else
+            echo "System Dependency ($nxt_dep): already installed"
+        fi
+    done
+}
+
+function ensure_system_dependencies () {
+    dependencies=$1
+    # Split off the system dependency install base on system type Linux, MacOS, Windows, etc
+
+    # For now we only support Linux
+    ensure_apt_dependencies "$dependencies"
+}
+
+# Run the dependency checks on the system
+echo "BASE DEPENDENCIES:"
+APT_BASE_DEPENDENCIES="build-essential python3.8 python3.8-dev python3-setuptools python3-pip virtualenv"
+ensure_system_dependencies "$APT_BASE_DEPENDENCIES"
+echo
+
+echo "POSTGRESQL DEPENDENCIES"
+POSTGRESQL_DEPENDENCIES="postgresql postgresql-contrib libpq-dev"
+ensure_system_dependencies "$POSTGRESQL_DEPENDENCIES"
+echo
+echo "---------------------------------------------------------------------------------------"
+
+# -------------------------------------------------------------------------------------------
+#                                 Create the Virtual Environment
+# -------------------------------------------------------------------------------------------
+echo
+echo
+echo "---------------------------- VIRTUAL ENVIRONMENT CREATION -----------------------------"
+if [ ! -f $INITIALIZED_FILE ]; then
+
+    virtualenv -p python3.8 $VIRTUAL_ENV_DIR
+
+    source $VIRTUAL_ENV_DIR/bin/activate
+
+    # Install pylint into the virtual environment
+    pip install pylint
+    pip install coverage
+    pip install netifaces
+    pip install paramiko
+    pip install psycopg2
+    pip install requests
+    pip install sqlalchemy
+    pip install sqlalchemy_utils
+    pip install ssdp
+
+    # Website and REST service dependencies
+    pip install gunicorn
+    pip install werkzeug==0.16.1
+    pip install flask
+    pip install flask-restplus
+
+    # Install dependencies into the virtual environment
+    pip install -r $REQUIREMENTS_FILE
+
+    touch $INITIALIZED_FILE
+
+    # Exit the virtual environment
+    deactivate
+else
+    echo "Virtual environment already intialized..."
+fi
+
+echo "---------------------------------------------------------------------------------------"

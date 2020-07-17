@@ -1,0 +1,5 @@
+
+_local
+service/website/static/images/cached
+
+*.pyc

@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Automation Pod - Devices</title>
+        <meta charset="utf-8">
+        <!-- Turn Off Caching of This Page -->
+        <meta http-equiv="Cache-Control" content="no-store" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
+
+        <!-- Configure the ViewPort Size -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Load required Bootstrap and BootstrapVue CSS -->
+        <link type="text/css" rel="stylesheet" href="/static/styles/bootstrap.css" />
+        <link type="text/css" rel="stylesheet" href="/static/styles/bootstrap-vue.css" />
+
+        <!-- Load polyfills to support older browsers -->
+        <script src="/static/javascript/polyfill.js"></script>
+
+        <!-- Load Vue followed by BootstrapVue -->
+        <script src="/static/javascript/vue.js"></script>
+        <script src="/static/javascript/bootstrap-vue.js"></script>
+
+        <!-- Load Http Vue Loader -->
+        <script src="/static/javascript/http-vue-loader.js"></script>
+
+        <script src="/static/javascript/axios.js"></script>
+
+        <style>
+            .list-group-item.active>.card {
+                background: #007bff;
+                border-color: #007bff;
+            }
+
+            .dtl-row {
+                display: block;
+                width: 100%;
+            }
+
+            .dtl-hdr-body {
+                background: whitesmoke;
+                margin-left: 20px;
+                margin-right: 20px;
+            }
+
+            .dtl-hdr-row {
+                display: flex;
+                flex-direction: row nowrap;
+            }
+
+            .dtl-hdr-stop-l {
+                font-weight: bolder;
+                padding-left:  20px;
+            }
+
+            .dtl-hdr-stop-v {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .dtl-hdr-inst-l {
+                font-weight: bolder;
+                padding-left:  20px;
+            }
+
+            .dtl-hdr-inst-v {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .dtl-body {
+                display: block;
+                flex-grow: 1;
+                border: black;
+                border-style: solid;
+                border-width: 1.5px;
+                padding-top: 5px;
+                padding-left: 5px;
+            }
+
+            .dtl-body-inline {
+                display: flex;
+                flex-direction: row nowrap;
+                flex-grow: 1;
+                border: black;
+                border-style: solid;
+                border-width: 1.5px;
+                padding-top: 5px;
+                padding-left: 5px;
+            }
+
+            .summary-label {
+                text-align: right;
+                min-width: 60px;
+                font-weight: bolder;
+                font-size: 14pt;
+                padding-right: 10;
+            }
+
+            .summary-value {
+                text-align: left;
+                min-width: 80px;
+                font-size: 14pt;
+                padding-left: 10px;
+                padding-right: 40px;
+            }
+
+            .summary-row {
+                display: flex;
+                flex-direction: row nowrap;
+                text-align: left;
+            }
+
+            .summary-table {
+                table-layout: fixed;
+                padding-left: 50px;
+                padding-right: 50px;
+            }
+
+            .summary-title {
+                text-align: center;
+            }
+
+        </style>
+
+        <!-- Load the Components -->
+        <script src="/static/components/deviceviewer.js"></script>
+
+    </head>
+    <body>
+        <section id='section-header'>
+            <nav class="navbar navbar-light bg-light" style="padding-top: 10px">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">
+                            <h1>Automation Pod</h1>
+                        </a>
+                    </div>
+                    <div class="nav navbar-nav" style="padding-top: 10px">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary" onclick="window.location.href = '/';"> Summary </button>
+                            <button type="button" class="btn btn-primary active"> Devices </button>
+                            <button type="button" class="btn btn-primary" onclick="window.location.href = '/jobs';"> Job Queue </button>
+                            <button type="button" class="btn btn-primary" onclick="window.location.href = '/results';"> Results </button>
+                        </div>
+                    </div>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#"><span class="glyphicon glyphicon-log-out"></span> Logout </a></li>
+                    </ul>
+                </div>
+            </nav>
+        </section>
+        <section id='section-body'>
+            <div id='application'>
+                <device-viewer style="margin-top: 40px;" title="Devices"
+                    list_identifier="exp-dev-list"
+                    detail_identifier="dev-det-view"
+                    v-bind:device_list="devices" ></device-viewer>
+            </div>
+            <!-- Load the Application-->
+            <script>
+                new window.Vue({
+                    el: '#application', 
+                    data: function() {
+                        var dobj = {
+                            username: "{{ username }}",
+                            devices: null
+                        };
+                        return dobj;
+                    },
+                    mounted () {
+                        var that = this;
+
+                        var qurl = "/api/1/devices";
+                        axios.get(qurl).then(
+                            (response) => {
+                                that.devices = response.data.items;
+                            }
+                        );
+                    }
+                });
+            </script>
+        </section>
+        <section id='section-footer'>
+        </section>
+    </body>
+</html>
