@@ -96,8 +96,10 @@ if [ ! -f $INITIALIZED_FILE ]; then
 
     source $VIRTUAL_ENV_DIR/bin/activate
 
-    # Install pylint into the virtual environment
+    # MSCODE Environment Dependencies
     pip install pylint
+
+    # Install pylint into the virtual environment
     pip install coverage
     pip install netifaces
     pip install paramiko
@@ -112,6 +114,9 @@ if [ ! -f $INITIALIZED_FILE ]; then
     pip install werkzeug==0.16.1
     pip install flask
     pip install flask-restplus
+
+    # git repository dependencies
+    pip install git+https://github.com/myronww/automationkit.git
 
     # Install dependencies into the virtual environment
     pip install -r $REQUIREMENTS_FILE

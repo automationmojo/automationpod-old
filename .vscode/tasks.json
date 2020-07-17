@@ -1,0 +1,74 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Environment - Reset",
+            "type": "shell",
+            "command": "${workspaceFolder}/deployment/setup-environment reset",
+            "problemMatcher": []
+        },
+        {
+            "label": "Environment - Setup",
+            "type": "shell",
+            "command": "${workspaceFolder}/deployment/setup-environment",
+            "problemMatcher": []
+        },
+        {
+            "label": "Test Result Server",
+            "type": "shell",
+            "options": {
+                "cwd": "${env:HOME}/akit/results"
+            },
+            "command": "${workspaceFolder}/_local/venv/bin/python -m http.server 8000",
+            "problemMatcher": []
+        },
+        {
+            "label": "Documentation Server",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/docs/dirhtml"
+            },
+            "command": "${workspaceFolder}/_local/venv/bin/python",
+            "args": [
+                "-m",
+                "http.server",
+                "8001"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Coherence - Help",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/thirdparty/coherence-src",
+                "env": {
+                    "PYTHONPATH": "${workspaceFolder}/packages:${workspaceFolder}/thirdparty/coherence-src:${workspaceFolder}/thirdparty/gallery-src:${workspaceFolder}/thirdparty/commandtool-src:${workspaceFolder}/thirdparty/cddb-src:${workspaceFolder}/thirdparty/gdata-src/src"
+                },
+            },
+            "command": "${workspaceFolder}/_local/venv/bin/python",
+            "args": [
+                "bin/coherence",
+                "--help"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Coherence - Start Server",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/thirdparty/coherence-src",
+                "env": {
+                    "PYTHONPATH": "${workspaceFolder}/packages:${workspaceFolder}/thirdparty/coherence-src:${workspaceFolder}/thirdparty/gallery-src:${workspaceFolder}/thirdparty/commandtool-src:${workspaceFolder}/thirdparty/cddb-src:${workspaceFolder}/thirdparty/gdata-src/src"
+                },
+            },
+            "command": "${workspaceFolder}/_local/venv/bin/python",
+            "args": [
+                "bin/coherence",
+                "--configfile=${workspaceFolder}/thirdparty/coherence-src/docs/coherence.conf.example"
+            ],
+            "problemMatcher": []
+        }
+    ]
+}
