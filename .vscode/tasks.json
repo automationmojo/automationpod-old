@@ -37,38 +37,6 @@
                 "8001"
             ],
             "problemMatcher": []
-        },
-        {
-            "label": "Coherence - Help",
-            "type": "shell",
-            "options": {
-                "cwd": "${workspaceFolder}/thirdparty/coherence-src",
-                "env": {
-                    "PYTHONPATH": "${workspaceFolder}/packages:${workspaceFolder}/thirdparty/coherence-src:${workspaceFolder}/thirdparty/gallery-src:${workspaceFolder}/thirdparty/commandtool-src:${workspaceFolder}/thirdparty/cddb-src:${workspaceFolder}/thirdparty/gdata-src/src"
-                },
-            },
-            "command": "${workspaceFolder}/_local/venv/bin/python",
-            "args": [
-                "bin/coherence",
-                "--help"
-            ],
-            "problemMatcher": []
-        },
-        {
-            "label": "Coherence - Start Server",
-            "type": "shell",
-            "options": {
-                "cwd": "${workspaceFolder}/thirdparty/coherence-src",
-                "env": {
-                    "PYTHONPATH": "${workspaceFolder}/packages:${workspaceFolder}/thirdparty/coherence-src:${workspaceFolder}/thirdparty/gallery-src:${workspaceFolder}/thirdparty/commandtool-src:${workspaceFolder}/thirdparty/cddb-src:${workspaceFolder}/thirdparty/gdata-src/src"
-                },
-            },
-            "command": "${workspaceFolder}/_local/venv/bin/python",
-            "args": [
-                "bin/coherence",
-                "--configfile=${workspaceFolder}/thirdparty/coherence-src/docs/coherence.conf.example"
-            ],
-            "problemMatcher": []
         }
     ]
 }
