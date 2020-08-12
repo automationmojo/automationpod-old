@@ -54,7 +54,7 @@ def view_devices_control():
 def view_devices_direct_review_js(target):
     username = "myron.walker"
 
-    upnp_agent = UpnpAgent()
+    upnp_agent = UpnpCoordinator()
 
     target_norm = normalize_mac_address(target)
 
@@ -81,7 +81,7 @@ def view_devices_direct_status(target, targeturl=None):
 
     username = "myron.walker"
 
-    upnp_agent = UpnpAgent()
+    upnp_agent = UpnpCoordinator()
 
     if targeturl is None:
         targeturl = "status"
@@ -116,7 +116,7 @@ def view_devices_direct_xml(target, targeturl):
 
     username = "myron.walker"
 
-    upnp_agent = UpnpAgent()
+    upnp_agent = UpnpCoordinator()
 
     target_norm = normalize_mac_address(target)
 

@@ -127,7 +127,7 @@ class DeviceDetail(Resource):
         """
             Returns a list of devices
         """
-        upnp_agent = UpnpAgent()
+        upnp_agent = UpnpCoordinator()
 
         rtndata = {
             "status": "failed"
