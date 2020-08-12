@@ -4,7 +4,7 @@ import os
 
 import akit.environment.activate
 
-from akit.integration.agents.upnpagent import UpnpAgent
+from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
 from akit.integration.landscaping import Landscape
 
 landscape = Landscape()
@@ -60,11 +60,11 @@ def teardown_apoddb(obj):
 
     return
 
-upnp_agent = UpnpAgent()
-upnp_agent.start()
-upnp_agent.begin_search()
+upnp_hint_list = landscape.get_upnp_device_lookup_table()
 
-expected_upnp_devices = landscape.get_upnp_devices()
+upnp_coord = UpnpCoordinator()
+upnp_coord.startup_scan(upnp_hint_list, exclude_interfaces=['lo'])
+
 
 app.register_blueprint(redirect_apidoc)
 

@@ -2,11 +2,11 @@
 from flask_restplus import Namespace, Resource
 from flask_restplus.reqparse import RequestParser
 
-from akit.integration.agents.upnpagent import UpnpAgent
+from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
 from akit.integration.landscaping import Landscape
 
 landscape = Landscape()
-upnp_agent = UpnpAgent()
+upnp_coord = UpnpCoordinator()
 
 STATUS_NAMESPACE_PATH = "/status"
 
@@ -23,7 +23,7 @@ class StatusSummary(Resource):
 
         found_upnp_devices = []
 
-        for child in upnp_agent.children:
+        for child in upnp_coord.children:
             cinfo = child.to_dict(brief=True)
             found_upnp_devices.append(cinfo)
 

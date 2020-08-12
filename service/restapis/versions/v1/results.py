@@ -7,12 +7,12 @@ from flask_restplus import Namespace, Resource
 from flask_restplus.reqparse import RequestParser
 
 from akit.environment.context import Context
-from akit.integration.agents.upnpagent import UpnpAgent
+from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
 from akit.integration.landscaping import Landscape
 
 context = Context()
 landscape = Landscape()
-upnp_agent = UpnpAgent()
+upnp_coord = UpnpCoordinator()
 
 RESULTS_NAMESPACE_PATH = "/results"
 

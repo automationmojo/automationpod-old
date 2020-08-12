@@ -8,10 +8,10 @@ from flask_restplus import fields
 
 
 from akit.integration.landscaping import Landscape
-from akit.integration.agents.upnpagent import UpnpAgent
+from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
 
 landscape = Landscape()
-upnp_agent = UpnpAgent()
+upnp_coord = UpnpCoordinator()
 
 DEVICES_NAMESPACE_PATH = "/devices"
 
@@ -64,7 +64,7 @@ class AllDevicesCollection(Resource):
             expected_devices_table[exp_usn] = exp_dev
 
         other_devices = []
-        for child in upnp_agent.children:
+        for child in upnp_coord.children:
 
             # Get a dictionary representation of the device
             cinfo = child.to_dict(brief=True)
@@ -127,7 +127,7 @@ class DeviceDetail(Resource):
         }
 
         found_child = None
-        for child in upnp_agent.children:
+        for child in upnp_coord.children:
             cinfo = child.to_dict(brief=True)
 
             if "MACAddress" in cinfo:

@@ -9,13 +9,13 @@ from flask_restplus import fields
 
 from akit.datum.orm import WorkQueue
 
-from akit.integration.agents.upnpagent import UpnpAgent
+from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
 from akit.integration.landscaping import Landscape
 
 from apoddb import get_apoddb_session
 
 landscape = Landscape()
-upnp_agent = UpnpAgent()
+upnp_coord = UpnpCoordinator()
 
 JOBQUEUE_NAMESPACE_PATH = "/jobqueue"
 
