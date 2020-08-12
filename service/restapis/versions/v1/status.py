@@ -6,7 +6,6 @@ from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
 from akit.integration.landscaping import Landscape
 
 landscape = Landscape()
-upnp_coord = UpnpCoordinator()
 
 STATUS_NAMESPACE_PATH = "/status"
 
@@ -19,6 +18,8 @@ class StatusSummary(Resource):
         """
             Returns a status summary
         """
+        upnp_coord = UpnpCoordinator()
+
         expected_upnp_devices = landscape.get_upnp_devices()
 
         found_upnp_devices = []

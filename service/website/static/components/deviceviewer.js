@@ -97,6 +97,11 @@ Vue.component('devices-list', {
                     sortable: false
                 },
                 {
+                    key: 'deviceDirect',
+                    label: '',
+                    sortable: false
+                },
+                {
                     key: 'modelName',
                     label: 'Model Name',
                     sortable: true
@@ -193,6 +198,9 @@ Vue.component('devices-list', {
                 v-bind:id="list_identifier" v-bind:items="visibleDevices" v-bind:fields="fields" @row-selected="onRowSelected" >
                 <template v-slot:cell(cachedIcon)="data">
                     <img :src="data.value"></img>
+                </template>
+                <template v-slot:cell(deviceDirect)="data">
+                    <a :href="data.value">&gt;</a>
                 </template>
             </b-table>
             <div style="display: flex; flex-direction: row-reverse; width: 100%;">

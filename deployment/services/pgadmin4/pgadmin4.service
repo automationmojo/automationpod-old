@@ -1,0 +1,13 @@
+[Unit]
+Description=PgAdmin4 Service
+After=network.target
+
+[Service]
+User=root
+Group=root
+WorkingDirectory=/usr/local/lib/python3.7/dist-packages/pgadmin4
+ExecStart=/user/bin/python3 /usr/local/lib/python3.7/dist-packages/pgadmin4/pgAdmin4.py
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

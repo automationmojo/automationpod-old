@@ -12,7 +12,6 @@ from akit.integration.landscaping import Landscape
 
 context = Context()
 landscape = Landscape()
-upnp_coord = UpnpCoordinator()
 
 RESULTS_NAMESPACE_PATH = "/results"
 
