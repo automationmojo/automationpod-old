@@ -5,7 +5,7 @@ import requests
 from flask import request, render_template, Response
 
 from akit.integration.landscaping import Landscape
-from akit.integration.agents.upnpagent import UpnpAgent
+from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
 
 landscape = Landscape()
 

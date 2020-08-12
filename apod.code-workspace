@@ -8,7 +8,7 @@
         }
     ],
     "settings": {
-        "python.pythonPath": "/media/myron/SSD/source/sonos/automationpod/_local/venv/bin/python",
-        "python.envFile": "/home/myron/source/automationpod/_local/development.env"
+        "python.pythonPath": "./_local/venv/bin/python",
+        "python.envFile": "./_local/development.env"
     }
 }

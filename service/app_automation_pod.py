@@ -60,19 +60,10 @@ def teardown_apoddb(obj):
 
     return
 
-<<<<<<< HEAD
 upnp_hint_list = landscape.get_upnp_device_lookup_table()
 
 upnp_coord = UpnpCoordinator()
 upnp_coord.startup_scan(upnp_hint_list, exclude_interfaces=['lo'])
-=======
-upnp_agent = UpnpAgent(interface='enp0s31f6')
-upnp_agent.start()
-upnp_agent.begin_search()
->>>>>>> 000972f... Some work on the automation pod ui
-
-
-upnp_agent.wait_for_devices(expected_upnp_devices)
 
 app.register_blueprint(redirect_apidoc)
 
