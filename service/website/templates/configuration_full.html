@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>Automation Pod - Summary</title>
+        <title>Automation Pod - Configuration</title>
         <meta charset="utf-8">
         <!-- Turn Off Caching of This Page -->
         <meta http-equiv="Cache-Control" content="no-store" />
@@ -28,7 +28,7 @@
         <script src="/static/javascript/axios.js"></script>
 
         <!-- Load the Components -->
-        <script src="/static/components/summaryviewer.js"></script>
+        <script src="/static/components/jobsviewer.js"></script>
 
     </head>
     <body>
@@ -42,8 +42,8 @@
                     </div>
                     <div class="nav navbar-nav" style="padding-top: 10px">
                         <div class="btn-group">
-                            <button type="button" class="btn btn-primary active"> Summary </button>
-                            <button type="button" class="btn btn-primary" onclick="window.location.href = '/configuration';"> Configuration </button>
+                            <button type="button" class="btn btn-primary" onclick="window.location.href = '/';"> Summary </button>
+                            <button type="button" class="btn btn-primary active"> Configuration </button>
                             <button type="button" class="btn btn-primary" onclick="window.location.href = '/devices';"> Devices </button>
                             <button type="button" class="btn btn-primary" onclick="window.location.href = '/jobs';"> Job Queue </button>
                             <button type="button" class="btn btn-primary" onclick="window.location.href = '/results';"> Results </button>
@@ -57,29 +57,20 @@
         </section>
         <section id='section-body'>
             <div id='application' style='width: 100%;'>
-                <summary-viewer></summary-viewer>
+                
             </div>
             <!-- Load the Application-->
             <script>
                 new window.Vue({
-                    el: '#application',
+                    el: '#application', 
                     data: function() {
                         var dobj = {
-                            username: "{{ username }}",
-                            test_result_list: null
+                            username: "{{ username }}"
                         };
                         return dobj;
                     },
                     mounted () {
-                        var that = this;
-
-                        var qurl = "/api/1/results";
-                        axios.get(qurl).then(
-                            (response) => {
-                                var test_result_list = response.data.results;
-                                that.test_result_list = test_result_list;
-                            }
-                        );
+                        
                     }
                 });
             </script>

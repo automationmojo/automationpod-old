@@ -65,13 +65,12 @@ upnp_hint_list = landscape.get_upnp_device_lookup_table()
 upnp_coord = UpnpCoordinator()
 upnp_coord.startup_scan(upnp_hint_list, exclude_interfaces=['lo'])
 
-
 app.register_blueprint(redirect_apidoc)
 
 # =================================================================
 # This main entry point is utilized for debug runs only, when we
 # install our service into NGINX and use Green Unicorn, the service
-# is launch by Green Unicorn by referencing the 'app' instance in
+# is launched by Green Unicorn by referencing the 'app' instance in
 # this module.
 def automation_pod_main():
 

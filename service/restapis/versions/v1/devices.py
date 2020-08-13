@@ -11,7 +11,6 @@ from akit.integration.landscaping import Landscape
 from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
 
 landscape = Landscape()
-upnp_coord = UpnpCoordinator()
 
 DEVICES_NAMESPACE_PATH = "/devices"
 
@@ -55,6 +54,8 @@ class AllDevicesCollection(Resource):
         """
             Returns a list of devices
         """
+        upnp_coord = UpnpCoordinator()
+
         expected_upnp_devices = landscape.get_upnp_devices()
 
         expected_devices_table = {}
@@ -81,6 +82,10 @@ class AllDevicesCollection(Resource):
                 try_download_icon_to_cache(cache_dir, icon_url, url_base=url_base)
             else:
                 cinfo["cachedIcon"] = "/static/images/unknown.png"
+
+            if "MACAddress" in cinfo:
+                dmac = cinfo["MACAddress"].replace(":", "").upper()
+                cinfo["deviceDirect"] = "/devices/direct/" + dmac + "/status"
 
             # If this device has a USN, try to lookup the device in the
             # expected device table, otherwise it is an unexpected device
@@ -122,6 +127,8 @@ class DeviceDetail(Resource):
         """
             Returns a list of devices
         """
+        upnp_agent = UpnpCoordinator()
+
         rtndata = {
             "status": "failed"
         }

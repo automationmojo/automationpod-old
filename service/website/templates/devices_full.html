@@ -134,12 +134,13 @@
                 <div class="container-fluid">
                     <div class="navbar-header">
                         <a class="navbar-brand" href="#">
-                            <h1>Automation Pod</h1>
+                            <h1>{{ podname }}</h1>
                         </a>
                     </div>
                     <div class="nav navbar-nav" style="padding-top: 10px">
                         <div class="btn-group">
                             <button type="button" class="btn btn-primary" onclick="window.location.href = '/';"> Summary </button>
+                            <button type="button" class="btn btn-primary" onclick="window.location.href = '/configuration';"> Configuration </button>
                             <button type="button" class="btn btn-primary active"> Devices </button>
                             <button type="button" class="btn btn-primary" onclick="window.location.href = '/jobs';"> Job Queue </button>
                             <button type="button" class="btn btn-primary" onclick="window.location.href = '/results';"> Results </button>

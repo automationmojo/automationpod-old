@@ -15,7 +15,6 @@ from akit.integration.landscaping import Landscape
 from apoddb import get_apoddb_session
 
 landscape = Landscape()
-upnp_coord = UpnpCoordinator()
 
 JOBQUEUE_NAMESPACE_PATH = "/jobqueue"
 
