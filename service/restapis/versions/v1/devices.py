@@ -125,7 +125,7 @@ class DeviceDetail(Resource):
 
    def get(self, mac):
         """
-            Returns a list of devices
+            Returns the detailed information about a specific device
         """
         upnp_agent = UpnpCoordinator()
 
