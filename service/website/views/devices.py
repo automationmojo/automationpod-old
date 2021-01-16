@@ -38,8 +38,8 @@ def view_devices():
 
     return render_template(template, podname=podname, username=username )
 
-def view_devices_control():
-    template = "devices_full_control.html"
+def view_devices_direct(target):
+    template = "devices_full_direct.html"
 
     podname=landscape.name
     if podname is None:
@@ -47,9 +47,10 @@ def view_devices_control():
 
     username = "myron.walker"
 
-    devices = request.form['devices']
+    deviceid = normalize_mac_address(target)
 
-    return render_template(template, podname=podname, devices_ids=devices, username=username)
+
+    return render_template(template, podname=podname, deviceid=deviceid, username=username)
 
 def view_devices_direct_review_js(target):
     username = "myron.walker"

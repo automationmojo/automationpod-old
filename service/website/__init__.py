@@ -7,7 +7,7 @@ from werkzeug.exceptions import InternalServerError
 from .views.configuration import view_configuration
 
 from .views.devices import view_devices
-from .views.devices import view_devices_control
+from .views.devices import view_devices_direct
 from .views.devices import view_devices_direct_review_js
 from .views.devices import view_devices_direct_status
 from .views.devices import view_devices_direct_xml
@@ -57,7 +57,7 @@ def register_website_blueprints(app):
         '/devices/direct/<regex(exp="[A-F0-9]{12}", errmsg="Invalid MAC address passed as device id."):target>/xml/<path:targeturl>',
         'view_devices_direct_xml', 
         view_devices_direct_xml)
-    app.add_url_rule('/devices/control', 'view_devices_control', view_devices_control)
+    app.add_url_rule('/devices/<regex(exp="[A-F0-9]{12}", errmsg="Invalid MAC address passed as device id."):target>', 'view_devices_direct', view_devices_direct)
     app.add_url_rule('/jobs', 'view_jobs', view_jobs)
     app.add_url_rule('/results', 'view_results', view_results)
     app.add_url_rule('/logstore/<path:leafpath>', 'view_logstore', view_logstore)

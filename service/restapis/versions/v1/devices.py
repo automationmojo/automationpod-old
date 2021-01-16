@@ -61,7 +61,7 @@ class AllDevicesCollection(Resource):
         expected_devices_table = {}
 
         for exp_dev in expected_upnp_devices:
-            exp_usn = exp_dev["USN"]
+            exp_usn = exp_dev["upnp"]["USN"]
             expected_devices_table[exp_usn] = exp_dev
 
         other_devices = []
@@ -85,7 +85,7 @@ class AllDevicesCollection(Resource):
 
             if "MACAddress" in cinfo:
                 dmac = cinfo["MACAddress"].replace(":", "").upper()
-                cinfo["deviceDirect"] = "/devices/direct/" + dmac + "/status"
+                cinfo["deviceDirect"] = "/devices/" + dmac
 
             # If this device has a USN, try to lookup the device in the
             # expected device table, otherwise it is an unexpected device
@@ -127,7 +127,7 @@ class DeviceDetail(Resource):
         """
             Returns the detailed information about a specific device
         """
-        upnp_agent = UpnpCoordinator()
+        upnp_coord = UpnpCoordinator()
 
         rtndata = {
             "status": "failed"
@@ -164,6 +164,40 @@ class DeviceDetail(Resource):
 
         return rtndata
 
+
+@devices_ns.route("/<mac>/files")
+class DeviceFiles(Resource):
+
+   def get(self, mac):
+        """
+            Returns the detailed information about a specific device
+        """
+        upnp_coord = UpnpCoordinator()
+
+        rtndata = {
+            "status": "failed"
+        }
+
+        found_child = None
+        for child in upnp_coord.children:
+            cinfo = child.to_dict(brief=True)
+
+            if "MACAddress" in cinfo:
+                cmac = cinfo["MACAddress"]
+                if mac == cmac:
+                    found_child = child
+
+        if found_child is not None:
+            found_dev = found_child.to_dict(brief=False)
+
+            #TODO: Get the devices files using an SSHAgent
+
+            rtndata = {
+                "status": "success",
+                "device": found_dev
+            }
+
+        return rtndata
 
 devices_multi_invoke_model = devices_ns.model("DevicesMultiInvokePacket", {
         "packet": fields.Raw(required=True, description="The invoke packet to use on the devices.")

@@ -138,12 +138,16 @@
                         </a>
                     </div>
                     <div class="nav navbar-nav" style="padding-top: 10px">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-primary" onclick="window.location.href = '/';"> Summary </button>
-                            <button type="button" class="btn btn-primary" onclick="window.location.href = '/configuration';"> Configuration </button>
-                            <button type="button" class="btn btn-primary active"> Devices </button>
-                            <button type="button" class="btn btn-primary" onclick="window.location.href = '/jobs';"> Job Queue </button>
-                            <button type="button" class="btn btn-primary" onclick="window.location.href = '/results';"> Results </button>
+                        <div style="flex-flow: column;">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary" onclick="window.location.href = '/';"> Summary </button>
+                                <button type="button" class="btn btn-primary active"> Devices </button>
+                                <button type="button" class="btn btn-primary" onclick="window.location.href = '/jobs';"> Job Queue </button>
+                                <button type="button" class="btn btn-primary" onclick="window.location.href = '/results';"> Results </button>
+                            </div>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary" onclick="window.location.href = '/configuration';"> Configuration </button>
+                            </div>
                         </div>
                     </div>
                     <ul class="nav navbar-nav navbar-right">

@@ -1,1 +1,1 @@
-git+https://github.com/myronsonos/automationkit.git
+git+https://github.com/myronww/automationkit.git

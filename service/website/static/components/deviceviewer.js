@@ -6,7 +6,7 @@ Vue.component('device-viewer', {
     // This prop is called todo.
     data: function () {
         var dobj  = {
-            device_filter: "*"
+            device_filter_selection: null
         }
 
         return dobj;
@@ -24,11 +24,19 @@ Vue.component('device-viewer', {
             type: String,
             default: "not-set"
         },
+        device_filter: {
+            type: String,
+            default: "*"
+        },
         device_list: {
             default: function() {
                 return {}
             }
-        }
+        },
+        show_filter: {
+            type: Boolean,
+            default: true
+        }, 
     },
     computed: {
         deviceFilterLabel() {
@@ -52,18 +60,39 @@ Vue.component('device-viewer', {
     },
     methods: {
         setDeviceFilter(group) {
-            this.device_filter = group;
+            this.device_filter_selection = group
+        },
+        getDeviceFilter() {
+            fval = this.device_filter
+            if ((this.show_filter) && (this.device_filter_selection != null)) {
+                fval = this.device_filter_selection
+            }
+
+            return fval
+        },
+        selectAllRows() {
+            this.$refs.devicesTable.selectAllRows()
+        },
+        clearSelected() {
+            this.$refs.devicesTable.clearSelected()
         }
     },
     template: `
         <div style="display: flex; flex-direction: column; width: 100%">
             <div style="display: flex; flex-direction: row; width: 100%">
-                <div style="flex-grow: 1;"></div>
+                <div style="flex-grow: 1;">
+                    <div style="display: flex; flex-direction: row; width: 100%; ">
+                        <div style="width: 20px;"></div>
+                        <b-button @click="clearSelected">Clear All</b-button>
+                        <div style="width: 20px;"></div>
+                        <b-button @click="selectAllRows">Select All</b-button>
+                    </div>
+                </div>
                 <div><h2>{{title}}</h2></div>
                 <div style="flex-grow: 1;" >
                     <div style="display: flex; flex-direction: row;">
                         <div style="flex-grow: 1;"></div>
-                        <div>
+                        <div v-if="show_filter">
                             <b-dropdown id="device-filter-select" v-bind:text="deviceFilterLabel" class="m-md-2">
                                 <b-dropdown-item @click="setDeviceFilter('*');" >All</b-dropdown-item>
                                 <b-dropdown-item @click="setDeviceFilter('expected');">Expected</b-dropdown-item>
@@ -78,7 +107,8 @@ Vue.component('device-viewer', {
                 <devices-list ref="devicesTable" v-bind:list_identifier="list_identifier"
                     v-bind:detail_identifier="detail_identifier"
                     v-bind:device_list="device_list"
-                    v-bind:filter_group="device_filter"></devices-list>
+                    v-bind:filter_group="getDeviceFilter()">
+                </devices-list>
             </div>
         </div>
         ` // End of Template
@@ -97,14 +127,14 @@ Vue.component('devices-list', {
                     sortable: false
                 },
                 {
-                    key: 'deviceDirect',
-                    label: '',
-                    sortable: false
-                },
-                {
                     key: 'modelName',
                     label: 'Model Name',
                     sortable: true
+                },
+                {
+                    key: 'roomName',
+                    label: 'Room Name',
+                    sortable: false
                 },
                 {
                     key: 'modelNumber',
@@ -149,6 +179,10 @@ Vue.component('devices-list', {
             default: function() {
                 return {};
             }
+        },
+        direct_access: {
+            type: Boolean,
+            default: false
         },
         filter_group: {
             type: String,
@@ -196,19 +230,10 @@ Vue.component('devices-list', {
         <div style="display: flex; flex-direction: column; width: 100%">
             <b-table ref="selectableTable" selectable select-mode="multi"
                 v-bind:id="list_identifier" v-bind:items="visibleDevices" v-bind:fields="fields" @row-selected="onRowSelected" >
-                <template v-slot:cell(cachedIcon)="data">
-                    <img :src="data.value"></img>
-                </template>
-                <template v-slot:cell(deviceDirect)="data">
-                    <a :href="data.value">&gt;</a>
+                <template v-slot:cell(cachedIcon)="slot">
+                    <a :href="slot.item.deviceDirect"><img :src="slot.item.cachedIcon" style="width:32px;height:32px;"></img></a>
                 </template>
             </b-table>
-            <div style="display: flex; flex-direction: row-reverse; width: 100%;">
-                <div style="width: 20px;"></div>
-                <b-button @click="clearSelected">Clear All</b-button>
-                <div style="width: 20px;"></div>
-                <b-button @click="selectAllRows">Select All</b-button>
-            </div>
         </div>
         ` // End of Template
 });

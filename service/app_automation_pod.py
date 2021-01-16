@@ -60,7 +60,7 @@ def teardown_apoddb(obj):
 
     return
 
-upnp_hint_list = landscape.get_upnp_device_lookup_table()
+upnp_hint_list = []
 
 upnp_coord = UpnpCoordinator()
 upnp_coord.startup_scan(upnp_hint_list, exclude_interfaces=['lo'])
