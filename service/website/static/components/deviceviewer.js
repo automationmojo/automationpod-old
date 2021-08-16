@@ -149,7 +149,7 @@ Vue.component('devices-list', {
                 {
                     key: 'MACAddress',
                     label: 'MAC Address',
-                    sortable: false
+                    sortable: true
                 },
                 {
                     key: 'softwareVersion',
@@ -159,7 +159,7 @@ Vue.component('devices-list', {
                 {
                     key: 'household',
                     label: 'Household',
-                    sortable: false
+                    sortable: true
                 }
             ],
             selected: []

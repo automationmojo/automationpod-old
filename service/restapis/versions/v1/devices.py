@@ -63,9 +63,13 @@ class AllDevicesCollection(Resource):
             exp_usn = exp_dev["upnp"]["USN"]
             expected_devices_table[exp_usn] = exp_dev
 
-        other_devices = []
+        active_devices_table = {}
+        inactive_devices_table = {}
+        error_devices_table = {}
+        other_devices_table = {}
+
         for child in upnp_coord.children:
-            # Switch from the landscape device to the upnp device
+            # Convert from a landscape device to the upnp device extension
             child = child.upnp
 
             # Get a dictionary representation of the device
@@ -88,25 +92,61 @@ class AllDevicesCollection(Resource):
                 dmac = cinfo["MACAddress"].replace(":", "").upper()
                 cinfo["deviceDirect"] = "/devices/" + dmac
 
-            # If this device has a USN, try to lookup the device in the
+            # If this device has a USN_DEV, try to lookup the device in the
             # expected device table, otherwise it is an unexpected device
-            if "USN" in cinfo:
-                usn = cinfo["USN"]
-                if usn in expected_devices_table:
+            if "USN_DEV" in cinfo:
+                usn_dev = cinfo["USN_DEV"]
+                if usn_dev in expected_devices_table:
                     cinfo["group"] = "expected"
-                    expected_devices_table[usn] = cinfo
+                    expected_devices_table[usn_dev] = cinfo
+                    active_devices_table[usn_dev] = cinfo
                 else:
                     cinfo["group"] = "other"
-                    other_devices.append(cinfo)
+                    other_devices_table[usn_dev] = cinfo
             else:
-                cinfo["group"] = "other"
-                other_devices.append(cinfo)
+                cinfo["group"] = "error"
+
+        for dinfo in expected_devices_table.values():
+            usn_dev = None
+            if "USN_DEV" not in dinfo:
+                try:
+                    upnp=dinfo["upnp"]
+                    usn_dev = upnp["USN"]
+                    if usn_dev.find("::") > -1:
+                        usn_dev, _ = usn_dev.split("::")
+                    dinfo["USN"] = usn_dev + "::upnp:rootdevice"
+                    dinfo["USN_DEV"] = usn_dev
+                    dinfo["USN_CLS"] = "::upnp:rootdevice"
+                    if "modelName" in upnp:
+                        dinfo["modelName"] = upnp["modelName"]
+                    if "modelNumber" in upnp:
+                        dinfo["modelNumber"] = upnp["modelNumber"]
+                except KeyError:
+                    dinfo["group"] = "error"
+            else:
+                usn_dev = dinfo["USN_DEV"]
+
+            if usn_dev is not None and usn_dev not in active_devices_table:
+                dinfo["group"] = "expected"
+                inactive_devices_table[usn_dev] = dinfo
+            else:
+                dinfo["group"] = "error"
 
         all_devices = []
-        all_devices.extend(expected_devices_table.values())
-        all_devices.extend(other_devices)
+        all_devices.extend(active_devices_table.values())
+        all_devices.extend(error_devices_table.values())
+        all_devices.extend(inactive_devices_table.values())
+        all_devices.extend(other_devices_table.values())
 
-        for dinfo in other_devices:
+        for dinfo in all_devices:
+            if "modelName" not in dinfo:
+                dinfo["modelName"] = "(unknown)"
+            if "modelNumber" not in dinfo:
+                dinfo["modelNumber"] = "(unknown)"
+            if "roomName" not in dinfo:
+                dinfo["roomName"] = "(unknown)"
+            if "IPAddress" not in dinfo:
+                dinfo["IPAddress"] = "(unknown)"
             if "MACAddress" not in dinfo:
                 dinfo["MACAddress"] = "(unknown)"
             if "softwareVersion" not in dinfo:
@@ -128,7 +168,7 @@ class DeviceDetail(Resource):
         """
             Returns the detailed information about a specific device
         """
-        upnp_coord = UpnpCoordinator()
+        upnp_coord = landscape.upnp_coord
 
         rtndata = {
             "status": "failed"
