@@ -3,7 +3,7 @@ from flask import g
 
 from sqlalchemy.orm import sessionmaker
 
-from akit.integration.landscaping import Landscape
+from akit.integration.landscaping.landscape import Landscape
 from akit.datum.dbio import open_apod_postgresql_database
 
 landscape = Landscape()

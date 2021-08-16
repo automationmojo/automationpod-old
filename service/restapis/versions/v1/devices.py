@@ -7,8 +7,7 @@ from flask_restplus.reqparse import RequestParser
 from flask_restplus import fields
 
 
-from akit.integration.landscaping import Landscape
-from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
+from akit.integration.landscaping.landscape import Landscape
 
 landscape = Landscape()
 
@@ -54,9 +53,9 @@ class AllDevicesCollection(Resource):
         """
             Returns a list of devices
         """
-        upnp_coord = UpnpCoordinator()
+        upnp_coord = landscape.upnp_coord
 
-        expected_upnp_devices = landscape.get_upnp_devices()
+        expected_upnp_devices = landscape.get_upnp_device_configs()
 
         expected_devices_table = {}
 
@@ -66,6 +65,8 @@ class AllDevicesCollection(Resource):
 
         other_devices = []
         for child in upnp_coord.children:
+            # Switch from the landscape device to the upnp device
+            child = child.upnp
 
             # Get a dictionary representation of the device
             cinfo = child.to_dict(brief=True)

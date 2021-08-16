@@ -3,7 +3,7 @@ import os
 
 from flask import render_template
 
-from akit.integration.landscaping import Landscape
+from akit.integration.landscaping.landscape import Landscape
 
 landscape = Landscape()
 

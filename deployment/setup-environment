@@ -113,7 +113,8 @@ if [ ! -f $INITIALIZED_FILE ]; then
 
         # Website and REST service dependencies
         pip install gunicorn
-        pip install werkzeug==0.16.1
+        pip install werkzeug==2.0.1
+        pip install jinja2<3.0
         pip install flask
         pip install flask-restplus
 
@@ -121,7 +122,7 @@ if [ ! -f $INITIALIZED_FILE ]; then
         if [ -f $REPO_REQUIREMENTS_FILE ]; then
                 pip install -r $REPO_REQUIREMENTS_FILE
         else
-                pip install git+https://github.com/myronww/automationkit.git
+                pip install git+https://github.com/automationmojo/automationkit.git
         fi
 
         # Install dependencies into the virtual environment

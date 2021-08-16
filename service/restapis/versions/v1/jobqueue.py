@@ -10,7 +10,7 @@ from flask_restplus import fields
 from akit.datum.orm import WorkQueue
 
 from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
-from akit.integration.landscaping import Landscape
+from akit.integration.landscaping.landscape import Landscape
 
 from apoddb import get_apoddb_session
 

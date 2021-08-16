@@ -8,7 +8,7 @@ DEPENDENCIES = [
       "sqlalchemy",
       "sqlalchemy_utils",
       "ssdp",
-      "werkzeug=='0.16.1'",
+      "werkzeug==2.0.1",
       "flask",
       "flask-restplus",
       "git+https://github.com/myronww/automationkit.git"

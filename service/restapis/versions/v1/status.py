@@ -3,7 +3,7 @@ from flask_restplus import Namespace, Resource
 from flask_restplus.reqparse import RequestParser
 
 from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
-from akit.integration.landscaping import Landscape
+from akit.integration.landscaping.landscape import Landscape
 
 landscape = Landscape()
 
