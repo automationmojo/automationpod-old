@@ -4,13 +4,13 @@ import os
 
 import akit.environment.activate
 
-from akit.mixins.upnpcoordinatorintegration import UpnpCoordinatorIntegration
+from akit.coupling.upnpcoordinatorintegration import UpnpCoordinatorIntegration
 
 from akit.integration.landscaping.landscape import Landscape
 
 
 from flask import Flask, url_for, g
-from flask_restplus import apidoc
+from flask_restx import apidoc
 
 from restapis import register_rest_blueprints
 from website import register_website_blueprints

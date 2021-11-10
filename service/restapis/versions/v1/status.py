@@ -1,6 +1,6 @@
 
-from flask_restplus import Namespace, Resource
-from flask_restplus.reqparse import RequestParser
+from flask_restx import Namespace, Resource
+from flask_restx.reqparse import RequestParser
 
 from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
 from akit.integration.landscaping.landscape import Landscape

@@ -180,20 +180,12 @@
                     mounted () {
                         var that = this;
 
-                        var qurl_base = "/api/1/device/";
-
-                        var device_id_list = that.device_ids.split(",");
-
-                        device_id_list.forEach(devid => function(devid) {
-
-                            var qurl = qurl_base + devid;
-                            axios.get(qurl).then(
-                                (response) => {
-                                    that.devices = response.data.items;
-                                }
-                            );
-
-                        });
+                        var qurl = "/api/1/devices";
+                        axios.get(qurl).then(
+                            (response) => {
+                                that.devices = response.data.items;
+                            }
+                        );
 
                     }
                 });

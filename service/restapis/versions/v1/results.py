@@ -3,8 +3,8 @@ import json
 import operator
 import os
 
-from flask_restplus import Namespace, Resource
-from flask_restplus.reqparse import RequestParser
+from flask_restx import Namespace, Resource
+from flask_restx.reqparse import RequestParser
 
 from akit.environment.context import Context
 from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator

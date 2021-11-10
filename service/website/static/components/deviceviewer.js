@@ -160,6 +160,11 @@ Vue.component('devices-list', {
                     key: 'household',
                     label: 'Household',
                     sortable: true
+                },
+                {
+                    key: 'skip',
+                    label: 'Disabled',
+                    sortable: false
                 }
             ],
             selected: []
@@ -232,6 +237,10 @@ Vue.component('devices-list', {
                 v-bind:id="list_identifier" v-bind:items="visibleDevices" v-bind:fields="fields" @row-selected="onRowSelected" >
                 <template v-slot:cell(cachedIcon)="slot">
                     <a :href="slot.item.deviceDirect"><img :src="slot.item.cachedIcon" style="width:32px;height:32px;"></img></a>
+                </template>
+                <template v-slot:cell(skip)="slot">
+                    <i v-if="slot.item.skip == true" class="material-icons">error</i>
+                    <i v-else class="material-icons">devices</i>
                 </template>
             </b-table>
         </div>

@@ -116,7 +116,7 @@ if [ ! -f $INITIALIZED_FILE ]; then
         pip install werkzeug==2.0.1
         pip install jinja2<3.0
         pip install flask
-        pip install flask-restplus
+        pip install flask-restx
 
         # git repository dependencies
         if [ -f $REPO_REQUIREMENTS_FILE ]; then

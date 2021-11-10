@@ -10,7 +10,7 @@ DEPENDENCIES = [
       "ssdp",
       "werkzeug==2.0.1",
       "flask",
-      "flask-restplus",
+      "flask-restx",
       "git+https://github.com/myronww/automationkit.git"
 ]
 

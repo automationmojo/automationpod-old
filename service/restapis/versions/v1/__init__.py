@@ -1,5 +1,5 @@
 
-from flask_restplus import Api, Namespace
+from flask_restx import Api, Namespace
 
 VERSION_INTEGER = 1
 

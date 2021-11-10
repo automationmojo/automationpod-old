@@ -3,11 +3,11 @@ import datetime
 
 from flask import request
 
-from flask_restplus import Namespace, Resource
-from flask_restplus.reqparse import RequestParser
-from flask_restplus import fields
+from flask_restx import Namespace, Resource
+from flask_restx.reqparse import RequestParser
+from flask_restx import fields
 
-from akit.datum.orm import WorkQueue
+from akit.datum.orm import WorkPacket
 
 from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
 from akit.integration.landscaping.landscape import Landscape
@@ -48,7 +48,7 @@ class JobQueueSummary(Resource):
         status = "WAITING"
         user_id = 0
 
-        wqitem = WorkQueue(title=title, description=description, branch=branch, build=build,
+        wqitem = WorkPacket(title=title, description=description, branch=branch, build=build,
                            flavor=flavor, added=added, status=status, packet=packet, user_id=user_id)
 
         session = get_apoddb_session()
@@ -65,7 +65,7 @@ class JobQueueSummary(Resource):
         qitems_list = []
 
         session = get_apoddb_session()
-        for wqitem in session.query(WorkQueue).all():
+        for wqitem in session.query(WorkPacket).all():
             item = wqitem.to_dict()
             item["username"] = "someuser"
             qitems_list.append(item)
