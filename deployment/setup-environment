@@ -113,9 +113,10 @@ if [ ! -f $INITIALIZED_FILE ]; then
 
         # Website and REST service dependencies
         pip install gunicorn
-        pip install werkzeug==2.0.1
-        pip install jinja2<3.0
+        pip install werkzeug
+        pip install jinja2
         pip install flask
+        pip install flask-migrate
         pip install flask-restx
 
         # git repository dependencies
