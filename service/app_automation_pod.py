@@ -2,7 +2,9 @@
 import logging
 import os
 
-import akit.environment.activate
+os.environ["AKIT_SERVICE_NAME"] = "apod"
+
+import akit.environment.service
 
 from akit.coupling.upnpcoordinatorintegration import UpnpCoordinatorIntegration
 
@@ -12,17 +14,14 @@ from akit.integration.landscaping.landscape import Landscape
 from flask import Flask, url_for, g
 from flask_restx import apidoc
 
-from restapis import register_rest_blueprints
-from website import register_website_blueprints
+from apod.paths import APodPaths
+from apod.restapis import register_rest_blueprints
+from apod.website import register_website_blueprints
 
-DIR_THIS = os.path.dirname(__file__)
-DIR_STATIC = os.path.join(DIR_THIS, "website", "static")
-DIR_RESULTS = os.path.expanduser(os.path.join("~", "akit", "results"))
-DIR_TEMPLATES = os.path.join(DIR_THIS, "website", "templates")
 
-logger = logging.getLogger("scms")
+logger = logging.getLogger("apod")
 
-app = Flask(__name__, template_folder=DIR_TEMPLATES, static_folder=DIR_STATIC)
+app = Flask(__name__, template_folder=APodPaths.DIR_TEMPLATES, static_folder=APodPaths.DIR_STATIC)
 app.config.SWAGGER_UI_JSONEDITOR = True
 
 #if environment.DEVELOPER_MODE:

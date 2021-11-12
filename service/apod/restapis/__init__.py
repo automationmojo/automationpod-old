@@ -3,7 +3,7 @@ import os
 
 from flask import Blueprint
 
-from restapis.versions.v1 import apply_namespaces as apply_namespaces_v1
+from apod.restapis.versions.v1 import apply_namespaces as apply_namespaces_v1
 
 def register_rest_blueprints(app, prefix):
 

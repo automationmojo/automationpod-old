@@ -7,10 +7,11 @@ VERSION_NAMESPACE_PATH = "/%d" % VERSION_INTEGER
 
 API_TITLE = "Automation Pod"
 
-from .devices import publish_namespaces as devices_publish_namespaces
-from .jobqueue import publish_namespaces as jobqueue_publish_namespaces
-from .results import publish_namespaces as results_publish_namespaces
-from .status import publish_namespaces as status_publish_namespaces
+from apod.restapis.versions.v1.devices import publish_namespaces as devices_publish_namespaces
+from apod.restapis.versions.v1.jobqueue import publish_namespaces as jobqueue_publish_namespaces
+from apod.restapis.versions.v1.landscape import publish_namespaces as landscape_publish_namespaces
+from apod.restapis.versions.v1.results import publish_namespaces as results_publish_namespaces
+from apod.restapis.versions.v1.status import publish_namespaces as status_publish_namespaces
 
 def apply_namespaces(bp):
 
@@ -27,6 +28,9 @@ def apply_namespaces(bp):
         api.add_namespace(ns_obj, ns_path)
     
     for ns_obj, ns_path in jobqueue_publish_namespaces(VERSION_NAMESPACE_PATH):
+        api.add_namespace(ns_obj, ns_path)
+
+    for ns_obj, ns_path in landscape_publish_namespaces(VERSION_NAMESPACE_PATH):
         api.add_namespace(ns_obj, ns_path)
 
     for ns_obj, ns_path in results_publish_namespaces(VERSION_NAMESPACE_PATH):

@@ -6,8 +6,10 @@ from flask_restx import Namespace, Resource
 from flask_restx.reqparse import RequestParser
 from flask_restx import fields
 
-
 from akit.integration.landscaping.landscape import Landscape
+
+from apod.paths import APodPaths
+from apod.web import try_download_icon_to_cache
 
 landscape = Landscape()
 
@@ -15,36 +17,6 @@ DEVICES_NAMESPACE_PATH = "/devices"
 
 devices_ns = Namespace("Devices v1", description="")
 
-from website import static as static_module
-
-DIR_STATIC = os.path.dirname(static_module.__file__)
-
-def try_download_icon_to_cache(cache_dir, icon_url, url_base=None):
-
-    try:
-        ext_cache_dir = cache_dir
-
-        icon_url_parts = icon_url.split("/")
-        if len(icon_url_parts) > 1:
-            ext_cache_dir = os.path.join(cache_dir, *icon_url_parts[:-1])
-
-        if not os.path.exists(ext_cache_dir):
-            os.makedirs(ext_cache_dir)
-
-        cache_filename = os.path.join(DIR_STATIC, "images", "cached", *icon_url_parts)
-        if not os.path.exists(cache_filename):
-            full_url = icon_url
-            if url_base is not None:
-                full_url = url_base + icon_url
-
-            resp = requests.get(full_url)
-            if resp.status_code == 200:
-                with open(cache_filename, 'wb') as iconf:
-                    iconf.write(resp.content)
-    except:
-        print("Error downloading file.")
-
-    return
 
 @devices_ns.route("/")
 class AllDevicesCollection(Resource):
@@ -82,7 +54,7 @@ class AllDevicesCollection(Resource):
                 replacement_url = "/static/images/cached/" + icon_url.lstrip("/")
                 cinfo["cachedIcon"] = replacement_url
 
-                cache_dir = os.path.join(DIR_STATIC, "images", "cached")
+                cache_dir = os.path.join(APodPaths.DIR_STATIC, "images", "cached")
                 url_base = cinfo.get("URLBase", None)
                 try_download_icon_to_cache(cache_dir, icon_url, url_base=url_base)
             else:
@@ -192,7 +164,7 @@ class DeviceDetail(Resource):
                 found_dev["cachedIcon"] = replacement_url
 
 
-                cache_dir = os.path.join(DIR_STATIC, "images", "cached")
+                cache_dir = os.path.join(APodPaths.DIR_STATIC, "images", "cached")
                 url_base = found_dev.get("URLBase", None)
                 try_download_icon_to_cache(cache_dir, icon_url, url_base=url_base)
             else:

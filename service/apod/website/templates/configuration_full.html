@@ -22,13 +22,13 @@
         <script src="/static/javascript/vue.js"></script>
         <script src="/static/javascript/bootstrap-vue.js"></script>
 
-        <!-- Load Http Vue Loader -->
-        <script src="/static/javascript/http-vue-loader.js"></script>
-
         <script src="/static/javascript/axios.js"></script>
 
+        <!-- Load GoJS diagram support -->
+        <script src="/static/javascript/go-debug.js"></script>
+
         <!-- Load the Components -->
-        <script src="/static/components/deviceviewer.js"></script>
+        <script src="/static/components/physicalconnectionsviewer.js"></script>
 
     </head>
     <body>
@@ -61,35 +61,10 @@
         </section>
         <section id='section-body'>
             <div id='application'>
-
-                <div>
-                    <b-tabs content-class="mt-3">
-                        <b-tab title="UPNP" active>
-
-                            <device-viewer style="margin-top: 40px;"
-                                title="Expected Devices"
-                                list_identifier="expected-devices-list"
-                                detail_identifier="expected-devices-detail"
-                                v-bind:device_list="devices"
-                                v-bind:show_filter=false
-                                v-bind:device_filter="'expected'">
-                            </device-viewer>
-
-                            <device-viewer style="margin-top: 40px;"
-                                title="Other Devices"
-                                list_identifier="other-devices-list"
-                                detail_identifier="other-devices-detail"
-                                v-bind:device_list="devices"
-                                v-bind:show_filter=false
-                                v-bind:device_filter="'other'">
-                            </device-viewer>
-
-                        </b-tab>
-                        <b-tab title="Builds">
-
-                        </b-tab>
-                    </b-tabs>
-                </div>
+                <physical-connections-viewer style="margin-top: 40px;"
+                    title="Physical Connections"
+                    v-bind:landscape="landscape">
+                </physical-connections-viewer>
             </div>
             <!-- Load the Application-->
             <script>
@@ -98,17 +73,17 @@
                     data: function() {
                         var dobj = {
                             username: "{{ username }}",
-                            devices: null
+                            landscape: null
                         };
                         return dobj;
                     },
                     mounted () {
                         var that = this;
 
-                        var qurl = "/api/1/devices";
+                        var qurl = "/api/1/landscape";
                         axios.get(qurl).then(
                             (response) => {
-                                that.devices = response.data.items;
+                                that.landscape = response.data;
                             }
                         );
                     }
