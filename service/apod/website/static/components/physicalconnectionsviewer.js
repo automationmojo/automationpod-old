@@ -125,26 +125,53 @@ Vue.component('physical-connections-viewer', {
                 diagram.allowCopy = false;
                 diagram.nodeTemplate = go.GraphObject.make(
                     go.Node,
-                    "Auto",  // the Shape automatically fits around the TextBlock
-                    go.GraphObject.make(
-                        go.Shape,
-                        "RoundedRectangle",  // use this kind of figure for the Shape
-                        // bind Shape.fill to Node.data.color
-                        new go.Binding("fill", "color")),
+                    // We are using a Table so we can place small nodes around a central shape
+                    "Table",
+                    {
+                        locationObjectName: "BODY",
+                        locationSpot: go.Spot.Center,
+                        selectionObjectName: "BODY",
+                        //contextMenu: nodeMenu
+                    },
+                    new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
 
+                    // ================== COMPONENT BODY ==================
                     go.GraphObject.make(
-                        go.TextBlock,
-                        { margin: 3 , alignment: go.Spot.Bottom},  // some room around the text
-                        // bind TextBlock.text to Node.data.key
-                        new go.Binding("text", "key")),
-
-                    go.GraphObject.make(
-                        go.Picture,
-                        { 
-                            desiredSize: new go.Size(100, 100)
+                        go.Panel, "Auto",
+                        {
+                            name: "BODY",
+                            row: 1,
+                            column: 1,
+                            height: 128,
+                            width: 128
                         },
-                        new go.Binding("source", "icon")),
+                        go.GraphObject.make(
+                            go.Shape,
+                            "RoundedRectangle",  // use this kind of figure for the Shape
+                            // bind Shape.fill to Node.data.color
+                            new go.Binding("fill", "color")
+                        ),
+                        go.GraphObject.make(
+                            go.TextBlock,
+                            {
+                                margin: 3,
+                                alignment: go.Spot.Bottom  // some room around the text
+                                // bind TextBlock.text to Node.data.key
+                            },
+                            new go.Binding("text", "key")
+                        ),
+                        go.GraphObject.make(
+                            go.Picture,
+                            { 
+                                desiredSize: new go.Size(100, 100)
+                            },
+                            new go.Binding("source", "icon")
+                        )
+                    ),
 
+
+
+                    // ================== COMPONENT BODY ==================
                     go.GraphObject.make(
                         go.Panel,
                         "Horizontal",
@@ -175,6 +202,101 @@ Vue.component('physical-connections-viewer', {
                         }
                     ),
 
+                    
+                    // ================== LEFT PORT ELEMENTS ==================
+                    go.GraphObject.make(
+                        go.Panel,
+                        "Vertical",
+                        new go.Binding("itemArray", "leftArray"),
+                        {
+                            row: 1,
+                            column: 0,
+                            itemTemplate: go.GraphObject.make(
+                                go.Panel,
+                                {
+                                    _side: "left",
+                                    fromSpot: go.Spot.Left, toSpot: go.Spot.Left,
+                                    fromLinkable: true, toLinkable: true, cursor: "pointer"
+                                    //contextMenu: portMenu
+                                },
+                                new go.Binding("portId", "portId"),
+                                go.GraphObject.make(
+                                    go.Shape,
+                                    "Rectangle",
+                                    {
+                                        stroke: null, strokeWidth: 0,
+                                        desiredSize: portSize,
+                                        margin: new go.Margin(0, 1)
+                                    },
+                                    new go.Binding("fill", "portColor")
+                                )
+                            )
+                        }
+                    ),
+
+                    // ================== TOP PORT ELEMENTS ==================
+                    go.GraphObject.make(
+                        go.Panel,
+                        "Horizontal",
+                        new go.Binding("itemArray", "topArray"),
+                        {
+                            row: 0,
+                            column: 1,
+                            itemTemplate: go.GraphObject.make(
+                                go.Panel,
+                                {
+                                    _side: "bottom",
+                                    fromSpot: go.Spot.Top, toSpot: go.Spot.Top,
+                                    fromLinkable: true, toLinkable: true, cursor: "pointer"
+                                    //contextMenu: portMenu
+                                },
+                                new go.Binding("portId", "portId"),
+                                go.GraphObject.make(
+                                    go.Shape,
+                                    "Rectangle",
+                                    {
+                                        stroke: null, strokeWidth: 0,
+                                        desiredSize: portSize,
+                                        margin: new go.Margin(0, 1)
+                                    },
+                                    new go.Binding("fill", "portColor")
+                                )
+                            )
+                        }
+                    ),
+
+                    // ================= RIGHT PORT ELEMENTS ==================
+                    go.GraphObject.make(
+                        go.Panel,
+                        "Vertical",
+                        new go.Binding("itemArray", "rightArray"),
+                        {
+                            row: 1,
+                            column: 0,
+                            itemTemplate: go.GraphObject.make(
+                                go.Panel,
+                                {
+                                    _side: "right",
+                                    fromSpot: go.Spot.Right, toSpot: go.Spot.Right,
+                                    fromLinkable: true, toLinkable: true, cursor: "pointer"
+                                    //contextMenu: portMenu
+                                },
+                                new go.Binding("portId", "portId"),
+                                go.GraphObject.make(
+                                    go.Shape,
+                                    "Rectangle",
+                                    {
+                                        stroke: null, strokeWidth: 0,
+                                        desiredSize: portSize,
+                                        margin: new go.Margin(0, 1)
+                                    },
+                                    new go.Binding("fill", "portColor")
+                                )
+                            )
+                        }
+                    ),
+
+                    // ================= BOTTOM PORT ELEMENTS ==================
                     go.GraphObject.make(
                         go.Panel,
                         "Horizontal",
@@ -203,7 +325,7 @@ Vue.component('physical-connections-viewer', {
                                 )
                             )
                         }
-                    ),
+                    )
                 );
 
                 diagram.layout = go.GraphObject.make(
@@ -238,6 +360,9 @@ Vue.component('physical-connections-viewer', {
                     )
                 );
 
+                var colorPower = "#de3c31";
+                var colorSerial = "#2a99de";
+
                 var lookup_power_server = {};
                 var lookup_serial_server = {};
 
@@ -251,14 +376,14 @@ Vue.component('physical-connections-viewer', {
                 var unknownHostIconUri = "static/images/unknown.png";
 
                 var serialServerIconUri = "static/images/unknown.png";
-                var serialPowerIconUri = "static/images/unknown.png";
+                var powerServerIconUri = "static/images/unknown.png";
 
                 if (lscape.pod.power != undefined) {
                     for (const pwrsvr of lscape.pod.power) {
 
                         nodeInfo = {
                             "key": pwrsvr.name,
-                            "iconUri": serialPowerIconUri,
+                            "iconUri": powerServerIconUri,
                             "color": "lightgray",
                             "nodeIndex": nodeIndex
                         };
@@ -328,18 +453,18 @@ Vue.component('physical-connections-viewer', {
                                     pwrname = power_mapping.name;
                                     pwrswitch = power_mapping.switch;
 
-                                    portId = pwrname + "/" + pwrswitch;
+                                    portId = pwrname + "/" + pwrswitch.toString();
                                     if ("bottomArray" in nodeInfo) {
                                         nodeInfo["bottomArray"].push(
                                             {
-                                                "portColor":"#ebe3fc",
+                                                "portColor": colorPower,
                                                 "portId": portId
                                             }
                                         );
                                     } else {
                                         nodeInfo["bottomArray"] = [
                                             {
-                                                "portColor":"#ebe3fc",
+                                                "portColor": colorPower,
                                                 "portId": portId
                                             }
                                         ];
@@ -352,14 +477,14 @@ Vue.component('physical-connections-viewer', {
                                         if ("topArray" in pwrsvr) {
                                             pwrsvr["topArray"].push(
                                                 {
-                                                    "portColor":"#ebe3fc",
+                                                    "portColor": colorPower,
                                                     "portId": portId
                                                 }
                                             );
                                         } else {
                                             pwrsvr["topArray"] = [
                                                 {
-                                                    "portColor":"#ebe3fc",
+                                                    "portColor": colorPower,
                                                     "portId": portId
                                                 }
                                             ]
@@ -368,7 +493,7 @@ Vue.component('physical-connections-viewer', {
                                         linkNode = {
                                             "from": pwrsvridx,
                                             "to": nodeIndex,
-                                            "fromPort": pwrswitch,
+                                            "fromPort": pwrswitch.toString(),
                                             "toPort": portId
                                         };
                                         graphLinks.push(linkNode)
@@ -381,21 +506,21 @@ Vue.component('physical-connections-viewer', {
                                 if (device.features.serial != undefined) {
                                     serial_mapping = device.features.serial;
 
-                                    sername = power_mapping.name;
-                                    serswitch = power_mapping.port;
+                                    sername = serial_mapping.name;
+                                    serport = serial_mapping.port;
 
-                                    portId = sername + "/" + serswitch;
+                                    portId = sername + "/" + serport.toString();
                                     if ("bottomArray" in nodeInfo) {
                                         nodeInfo["bottomArray"].push(
                                             {
-                                                "portColor":"#ebe3fc",
+                                                "portColor": colorSerial,
                                                 "portId": portId
                                             }
                                         );
                                     } else {
                                         nodeInfo["bottomArray"] = [
                                             {
-                                                "portColor":"#ebe3fc",
+                                                "portColor": colorSerial,
                                                 "portId": portId
                                             }
                                         ];
@@ -408,14 +533,14 @@ Vue.component('physical-connections-viewer', {
                                         if ("topArray" in sersvr) {
                                             sersvr["topArray"].push(
                                                 {
-                                                    "portColor":"#ebe3fc",
+                                                    "portColor": colorSerial,
                                                     "portId": portId
                                                 }
                                             );
                                         } else {
                                             sersvr["topArray"] = [
                                                 {
-                                                    "portColor":"#ebe3fc",
+                                                    "portColor": colorSerial,
                                                     "portId": portId
                                                 }
                                             ];
@@ -424,7 +549,7 @@ Vue.component('physical-connections-viewer', {
                                         linkNode = {
                                             "from": sersvridx,
                                             "to": nodeIndex,
-                                            "fromPort": serswitch,
+                                            "fromPort": serport.toString(),
                                             "toPort": portId
                                         };
                                         graphLinks.push(linkNode)
@@ -441,12 +566,23 @@ Vue.component('physical-connections-viewer', {
                     }
                 }
 
+                console.log(graphNodes);
+                console.log(graphLinks);
+
                 linkModel = new go.GraphLinksModel(
                     graphNodes,
                     graphLinks  // one link data, in an Array
                 );
                 linkModel.linkFromPortIdProperty = "fromPort";
                 linkModel.linkToPortIdProperty = "toPort";
+
+                diagram.toolManager.clickCreatingTool.archetypeNodeData = {
+                    name: "Unit",
+                    leftArray: [],
+                    rightArray: [],
+                    topArray: [],
+                    bottomArray: []
+                };
 
                 diagram.model = linkModel
             }

@@ -55,7 +55,7 @@ class Landscape(Resource):
                     icon_lookup[child_usn] = replacement_url
                 else:
                     cinfo["cachedIcon"] = self.unknown_icon_url
-                    icon_lookup[child_usn] = replacement_url
+                    icon_lookup[child_usn] = self.unknown_icon_url
             except:
                 pass
 
