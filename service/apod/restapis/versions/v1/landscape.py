@@ -21,7 +21,10 @@ landscape_ns = Namespace("Landscape v1", description="")
 @landscape_ns.route("/")
 class Landscape(Resource):
 
-    unknown_icon_url = "/static/images/unknown.png"
+    linux_client_icon_url = "static/images/linuxclient.png"
+    windows_client_icon_url = "static/images/windowsclient.png"
+    
+    unknown_icon_url = "/static/images/unknown.png"        
     
     def get(self):
         """
@@ -66,12 +69,20 @@ class Landscape(Resource):
             if "devices" in pod:
                 device_list = pod["devices"]
 
-                icon_url = self.unknown_icon_url
                 for nxtdev in device_list:
-                    if nxtdev["deviceType"] == "network/upnp":
+                    icon_url = self.unknown_icon_url
+
+                    device_type = nxtdev["deviceType"]
+                    if device_type == "network/upnp":
                         dev_usn = nxtdev["upnp"]["USN"]
                         if dev_usn in icon_lookup:
                             icon_url = icon_lookup[dev_usn]
+
+                    elif device_type == "network/ssh":
+                        if "platform" in nxtdev:
+                            platform = nxtdev["platform"].lower()
+                            if platform == "linux":
+                                icon_url = self.linux_client_icon_url
 
                     nxtdev["cachedIcon"] = icon_url
 

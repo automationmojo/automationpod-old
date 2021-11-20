@@ -163,7 +163,7 @@ Vue.component('physical-connections-viewer', {
                         go.GraphObject.make(
                             go.Picture,
                             { 
-                                desiredSize: new go.Size(100, 100)
+                                desiredSize: new go.Size(76, 76)
                             },
                             new go.Binding("source", "icon")
                         )
@@ -371,19 +371,17 @@ Vue.component('physical-connections-viewer', {
 
                 var nodeIndex = 0;
 
-                var linuxHostIconUri = "static/images/unknown.png";
-                var windowsHostIconUri = "static/images/unknown.png";
                 var unknownHostIconUri = "static/images/unknown.png";
 
                 var serialServerIconUri = "static/images/unknown.png";
-                var powerServerIconUri = "static/images/unknown.png";
+                var powerServerIconUri = "static/images/powerswitch.png";
 
                 if (lscape.pod.power != undefined) {
                     for (const pwrsvr of lscape.pod.power) {
 
                         nodeInfo = {
                             "key": pwrsvr.name,
-                            "iconUri": powerServerIconUri,
+                            "icon": powerServerIconUri,
                             "color": "lightgray",
                             "nodeIndex": nodeIndex
                         };
@@ -401,7 +399,7 @@ Vue.component('physical-connections-viewer', {
 
                         nodeInfo = {
                             "key": sersvr.name,
-                            "iconUri": serialServerIconUri,
+                            "icon": serialServerIconUri,
                             "color": "lightgray",
                             "nodeIndex": nodeIndex
                         };
@@ -418,28 +416,35 @@ Vue.component('physical-connections-viewer', {
                     // Create all of the device nodes
                     for (const device of lscape.pod.devices) {
                         var nodeInfo = null;
+
+                        var devPortBaseName =  "";
+                        var devPortIndex = 0;
+
                         iconUri = "static/images/unknown.png";
                         if (device.cachedIcon != undefined) {
                             iconUri = device.cachedIcon;
                         }
+
                         if (device.deviceType == "network/upnp") {
                             nodeInfo = {
                                 "key": device.upnp.modelName,
                                 "icon": iconUri,
                                 "color": "lightgray"
                             };
+                            devPortBaseName = device.upnp.USN;
                         }
                         else if (device.deviceType == "network/ssh") {
                             nodeInfo = {
                                 "key": device.host,
-                                "iconUri": iconUri,
-                                "color": "pink"
+                                "icon": iconUri,
+                                "color": "white"
                             };
+                            devPortBaseName = device.host;
                         }
                         else {
                             nodeInfo = {
                                 "key": "ERROR",
-                                "iconUri": iconUri,
+                                "icon": iconUri,
                                 "color": "pink"
                             };
                         }
@@ -453,48 +458,44 @@ Vue.component('physical-connections-viewer', {
                                     pwrname = power_mapping.name;
                                     pwrswitch = power_mapping.switch;
 
-                                    portId = pwrname + "/" + pwrswitch.toString();
+                                    toPortId = devPortBaseName + "/" + devPortIndex.toString()
+                                    devPortIndex += 1;
+
+                                    devPortNodeInfo = {
+                                        "portType": "power",
+                                        "portColor": colorPower,
+                                        "portId": toPortId
+                                    };
+
                                     if ("bottomArray" in nodeInfo) {
-                                        nodeInfo["bottomArray"].push(
-                                            {
-                                                "portColor": colorPower,
-                                                "portId": portId
-                                            }
-                                        );
+                                        nodeInfo["bottomArray"].push(devPortNodeInfo);
                                     } else {
-                                        nodeInfo["bottomArray"] = [
-                                            {
-                                                "portColor": colorPower,
-                                                "portId": portId
-                                            }
-                                        ];
+                                        nodeInfo["bottomArray"] = [devPortNodeInfo];
                                     }
+
+                                    fromPortId = pwrname + "/" + pwrswitch.toString();
 
                                     if (pwrname in lookup_power_server) {
                                         pwrsvr = lookup_power_server[pwrname];
                                         pwrsvridx = pwrsvr.nodeIndex;
 
+                                        pwrSvrPortNodeInfo = {
+                                            "portType": "power",
+                                            "portColor": colorPower,
+                                            "portId": fromPortId
+                                        }
+
                                         if ("topArray" in pwrsvr) {
-                                            pwrsvr["topArray"].push(
-                                                {
-                                                    "portColor": colorPower,
-                                                    "portId": portId
-                                                }
-                                            );
+                                            pwrsvr["topArray"].push(pwrSvrPortNodeInfo);
                                         } else {
-                                            pwrsvr["topArray"] = [
-                                                {
-                                                    "portColor": colorPower,
-                                                    "portId": portId
-                                                }
-                                            ]
+                                            pwrsvr["topArray"] = [pwrSvrPortNodeInfo]
                                         }
 
                                         linkNode = {
                                             "from": pwrsvridx,
                                             "to": nodeIndex,
-                                            "fromPort": pwrswitch.toString(),
-                                            "toPort": portId
+                                            "fromPort": fromPortId,
+                                            "toPort": toPortId
                                         };
                                         graphLinks.push(linkNode)
                                     }
@@ -509,48 +510,44 @@ Vue.component('physical-connections-viewer', {
                                     sername = serial_mapping.name;
                                     serport = serial_mapping.port;
 
-                                    portId = sername + "/" + serport.toString();
+                                    toPortId = devPortBaseName + "/" + devPortIndex.toString()
+                                    devPortIndex += 1;
+
+                                    devPortNodeInfo = {
+                                        "portType": "serial",
+                                        "portColor": colorSerial,
+                                        "portId": toPortId
+                                    };
+
                                     if ("bottomArray" in nodeInfo) {
-                                        nodeInfo["bottomArray"].push(
-                                            {
-                                                "portColor": colorSerial,
-                                                "portId": portId
-                                            }
-                                        );
+                                        nodeInfo["bottomArray"].push(devPortNodeInfo);
                                     } else {
-                                        nodeInfo["bottomArray"] = [
-                                            {
-                                                "portColor": colorSerial,
-                                                "portId": portId
-                                            }
-                                        ];
+                                        nodeInfo["bottomArray"] = [devPortNodeInfo];
                                     }
+
+                                    fromPortId = sername + "/" + serport.toString();
 
                                     if (sername in lookup_serial_server) {
                                         sersvr = lookup_serial_server[sername];
                                         sersvridx = sersvr.nodeIndex;
 
+                                        serSvrPortNodeInfo = {
+                                            "portType": "serial",
+                                            "portColor": colorSerial,
+                                            "portId": fromPortId
+                                        };
+
                                         if ("topArray" in sersvr) {
-                                            sersvr["topArray"].push(
-                                                {
-                                                    "portColor": colorSerial,
-                                                    "portId": portId
-                                                }
-                                            );
+                                            sersvr["topArray"].push(serSvrPortNodeInfo);
                                         } else {
-                                            sersvr["topArray"] = [
-                                                {
-                                                    "portColor": colorSerial,
-                                                    "portId": portId
-                                                }
-                                            ];
+                                            sersvr["topArray"] = [serSvrPortNodeInfo];
                                         }
 
                                         linkNode = {
                                             "from": sersvridx,
                                             "to": nodeIndex,
-                                            "fromPort": serport.toString(),
-                                            "toPort": portId
+                                            "fromPort": fromPortId,
+                                            "toPort": toPortId
                                         };
                                         graphLinks.push(linkNode)
                                     }
@@ -573,6 +570,8 @@ Vue.component('physical-connections-viewer', {
                     graphNodes,
                     graphLinks  // one link data, in an Array
                 );
+                linkModel.copiesArrays = true;
+                linkModel.copiesArrayObjects = true;
                 linkModel.linkFromPortIdProperty = "fromPort";
                 linkModel.linkToPortIdProperty = "toPort";
 
