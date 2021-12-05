@@ -13,15 +13,16 @@
         "python.envFile": "/home/myron/source/automationpod/.cache/development.env",
         "python.venvPath": "/home/myron/source/automationpod/.venv",
         "terminal.integrated.env.linux": {
-            "PYTHONPATH": "/home/myron/source/automationpod/packages:/home/myron/source/automationpod/testroots"
+            "PYTHONPATH": "/home/myron/source/automationpod/packages:/home/myron/source/automationpod/.venv/lib/python3.8/site-packages"
         },
         "terminal.integrated.profiles.linux": {
             "virtual-env": {
-                "path": "/home/myron/source/automationpod/.venv/bin/activate"
+                "path": "/home/myron/source/automationpod/.venv/bin/python3.8"
             }
         },
         "python.analysis.extraPaths": [
-            "packages"
+            "/home/myron/source/automationpod/.venv/lib/python3.8/site-packages",
+            "/home/myron/source/automationpod/packages"
         ],
         "restructuredtext.confPath": "/home/myron/source/automationpod/sphinx/docsrc",
         "restructuredtext.builtDocumentationPath": "/home/myron/source/automationpod/docs",

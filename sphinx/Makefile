@@ -5,7 +5,7 @@
 SPHINXOPTS    = -E
 SPHINXBUILD   = ./bin/sphinx-build
 SPHINXAPIDOC   = ./bin/sphinx-apidoc
-SOURCEDIR     = source
+SOURCEDIR     = docsrc
 BUILDDIR      = ../docs/
 APIDOCDIR     = "$(SOURCEDIR)/_apidoc"
 PACKAGESDIR   = ../packages/akit

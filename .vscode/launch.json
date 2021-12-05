@@ -9,54 +9,8 @@
             "type": "python",
             "request": "launch",
             "env": {
-                "PYTHONPATH": "${workspaceFolder}/packages"
             },
             "program": "${file}",
-            "console": "integratedTerminal",
-            "justMyCode": false
-        },
-        {
-            "name": "Python: Internal Tests",
-            "type": "python",
-            "request": "launch",
-            "env": {
-                "PYTHONPATH": "${workspaceFolder}/packages"
-            },
-            "program": "${workspaceFolder}/packages/akit/scripts/testrunner.py",
-            "args": [
-                "--root=${workspaceFolder}/testroots/internal",
-                "--include=internal"
-            ],
-            "console": "integratedTerminal",
-            "justMyCode": false
-        },
-        {
-            "name": "Python: Example Job",
-            "type": "python",
-            "request": "launch",
-            "env": {
-                "PYTHONPATH": "${workspaceFolder}/packages"
-            },
-            "program": "${workspaceFolder}/packages/akit/scripts/testrunner.py",
-            "args": [
-                "--root=${workspaceFolder}/testroots/internal",
-                "--job=jobs.jobexample@ExampleJob"
-            ],
-            "console": "integratedTerminal",
-            "justMyCode": false
-        },
-        {
-            "name": "Python: Example Sonos",
-            "type": "python",
-            "request": "launch",
-            "env": {
-                "PYTHONPATH": "${workspaceFolder}/packages"
-            },
-            "program": "${workspaceFolder}/packages/akit/scripts/testrunner.py",
-            "args": [
-                "--root=${workspaceFolder}/testroots/sonos",
-                "--job=sonos.jobs@ExampleJob"
-            ],
             "console": "integratedTerminal",
             "justMyCode": false
         },
@@ -65,7 +19,6 @@
             "type": "python",
             "request": "launch",
             "env": {
-                "PYTHONPATH": "${workspaceFolder}/packages:${workspaceFolder}/service"
             },
             "program": "${workspaceFolder}/service/app_automation_pod.py",
             "args": [],
