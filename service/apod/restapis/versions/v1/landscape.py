@@ -1,12 +1,15 @@
 
 import os
 import requests
+import yaml
 
-from flask_restx import Namespace, Resource
+from flask import request
+
+from flask_restx import fields, Namespace, Resource
 from flask_restx.reqparse import RequestParser
 from flask_restx import fields
 
-
+from akit.paths import get_filename_for_landscape
 from akit.integration.landscaping.landscape import Landscape
 
 from apod.paths import APodPaths
@@ -14,11 +17,16 @@ from apod.web import try_download_icon_to_cache
 
 landscape = Landscape()
 
+landscape_filename = get_filename_for_landscape()
+
+landscape_dirname = os.path.dirname(landscape_filename)
+landscape_ui_overlay = os.path.join(landscape_dirname, "landscape.ui.overlay.yaml")
+
 LANDSCAPE_NAMESPACE_PATH = "/landscape"
 
 landscape_ns = Namespace("Landscape v1", description="")
 
-@landscape_ns.route("/")
+@landscape_ns.route("/devices")
 class Landscape(Resource):
 
     linux_client_icon_url = "static/images/linuxclient.png"
@@ -30,7 +38,7 @@ class Landscape(Resource):
         """
             Returns a list of devices
         """
-        
+
         icon_lookup = {}
 
         upnp_coord = landscape.upnp_coord
@@ -87,6 +95,32 @@ class Landscape(Resource):
                     nxtdev["cachedIcon"] = icon_url
 
         return lsinfo
+
+@landscape_ns.route("/ui-overlay")
+class UIOverlay(Resource):     
+    
+    def get(self):
+        """
+            Returns the ui overlay for the devices
+        """
+
+        overlay_info = {}
+
+        if os.path.exists(landscape_ui_overlay):
+            with open(landscape_ui_overlay, 'r') as lof:
+                lofcontent = lof.read()
+                overlay_info = yaml.safe_load(lofcontent)
+
+        return overlay_info
+
+    def post(self):
+
+        overlay_info = request.json
+
+        with open(landscape_ui_overlay, 'w') as lof:
+            yaml.safe_dump(overlay_info, lof)
+
+        return
 
 
 def publish_namespaces(version_prefix):

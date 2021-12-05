@@ -105,8 +105,36 @@ CustomLink.prototype.computeCurviness = function() {
 };
 // end CustomLink class
 
-function createDeviceNodeInfo(key, icon, color, nodeIndex) {
+ async function fetch_ui_overlay() {
+    qurl = "/api/1/landscape/ui-overlay";
+    
+    var ui_overlay = {};
+
+    var response = await axios.get(qurl);
+    if (response.status == 200) {
+        overlay_info = response.data;
+
+        if ("devices" in overlay_info) {
+            device_overlay_list = overlay_info["devices"]
+
+            for (doidx in device_overlay_list) {
+                doinfo = device_overlay_list[doidx];
+                if ("id" in doinfo)
+                {
+                    ui_overlay[doinfo.id] = doinfo;
+                }
+            }
+
+        }
+    }
+
+    return ui_overlay
+}
+
+function createDeviceNodeInfo(id, key, icon, color, nodeIndex, ui_overlay) {
+
     nodeInfo = {
+        "id": id,
         "key": key,
         "icon": icon,
         "color": color,
@@ -116,6 +144,13 @@ function createDeviceNodeInfo(key, icon, color, nodeIndex) {
         "rightArray": [],
         "bottomArray": []
     };
+
+    if (id in ui_overlay) {
+        dev_overlay = ui_overlay[id];
+        if ("loc" in dev_overlay) {
+            nodeInfo.loc = dev_overlay.loc;
+        }
+    }
 
     return nodeInfo;
 };
@@ -130,7 +165,7 @@ function createDevicePortInfo(ptype, pcolor, pid) {
     return devPortNodeInfo;
 };
 
-function createConnectionNodesAndLinks(lscape) {
+function createConnectionNodesAndLinks(lscape, ui_overlay) {
     var colorPowerPort = "#de3c31";
     var colorPowerLine = "#e68b85";
 
@@ -145,6 +180,8 @@ function createConnectionNodesAndLinks(lscape) {
 
     var nodeIndex = 0;
 
+    debugger;
+
     var unknownHostIconUri = "static/images/unknown.png";
 
     var serialServerIconUri = "static/images/unknown.png";
@@ -154,7 +191,7 @@ function createConnectionNodesAndLinks(lscape) {
     if (lscape.pod.power != undefined) {
         for (const pwrsvr of lscape.pod.power) {
 
-            nodeInfo = createDeviceNodeInfo(pwrsvr.name, powerServerIconUri, "lightgray", nodeIndex);
+            nodeInfo = createDeviceNodeInfo(pwrsvr.name, pwrsvr.name, powerServerIconUri, "lightgray", nodeIndex, ui_overlay);
 
             lookup_power_server[pwrsvr.name] = nodeInfo
 
@@ -167,7 +204,7 @@ function createConnectionNodesAndLinks(lscape) {
     if (lscape.pod.serial != undefined) {
         for (const sersvr of lscape.pod.serial) {
 
-            nodeInfo = createDeviceNodeInfo(sersvr.name, serialServerIconUri, "lightgray", nodeIndex);
+            nodeInfo = createDeviceNodeInfo(sersvr.name, sersvr.name, serialServerIconUri, "lightgray", nodeIndex, ui_overlay);
 
             lookup_serial_server[sersvr.name] = nodeInfo
 
@@ -191,15 +228,15 @@ function createConnectionNodesAndLinks(lscape) {
             }
 
             if (device.deviceType == "network/upnp") {
-                nodeInfo = createDeviceNodeInfo(device.upnp.modelName, iconUri, "lightgray", nodeIndex);
+                nodeInfo = createDeviceNodeInfo(device.upnp.USN, device.upnp.modelName, iconUri, "lightgray", nodeIndex, ui_overlay);
                 devPortBaseName = device.upnp.USN;
             }
             else if (device.deviceType == "network/ssh") {
-                nodeInfo = createDeviceNodeInfo(device.host, iconUri, "white", nodeIndex);
+                nodeInfo = createDeviceNodeInfo(device.host, device.host, iconUri, "white", nodeIndex, ui_overlay);
                 devPortBaseName = device.host;
             }
             else {
-                nodeInfo = createDeviceNodeInfo("ERROR", iconUri, "pink", nodeIndex);
+                nodeInfo = createDeviceNodeInfo("unknown", "ERROR", iconUri, "pink", nodeIndex, ui_overlay);
             }
 
             if (device.features != undefined) {
@@ -216,11 +253,7 @@ function createConnectionNodesAndLinks(lscape) {
 
                         devPortNodeInfo = createDevicePortInfo("power", colorPowerPort, fromPortId);
 
-                        if ("bottomArray" in nodeInfo) {
-                            nodeInfo["bottomArray"].push(devPortNodeInfo);
-                        } else {
-                            nodeInfo["bottomArray"] = [devPortNodeInfo];
-                        }
+                        nodeInfo.bottomArray.push(devPortNodeInfo);
 
                         toPortId = pwrname + "/" + pwrswitch.toString();
 
@@ -293,11 +326,12 @@ function createConnectionNodesAndLinks(lscape) {
     return [graphNodes, graphLinks];
 }
 
-function renderConnectionDiagram(lscape, diagram) {
+function createConnectionDiagram(lscape, diagram, ui_overlay) {
     var portSize = new go.Size(16, 16);
 
     diagram.initialAutoScale = go.Diagram.Uniform;
     diagram.allowCopy = false;
+
     diagram.nodeTemplate = go.GraphObject.make(
         go.Node,
         // We are using a Table so we can place small nodes around a central shape
@@ -345,8 +379,42 @@ function renderConnectionDiagram(lscape, diagram) {
         ),
 
 
+        // ================== LEFT PORT ARRAY ==================
+        go.GraphObject.make(
+            go.Panel,
+            "Vertical",
+            new go.Binding("itemArray", "leftArray"),
+            {
+                row: 1,
+                column: 0,
+                itemTemplate: go.GraphObject.make(
+                    go.Panel,
+                    {
+                        _side: "left",
+                        fromSpot: go.Spot.Left,
+                        toSpot: go.Spot.Left,
+                        fromLinkable: true,
+                        toLinkable: true,
+                        cursor: "pointer"
+                        //contextMenu: portMenu
+                    },
+                    new go.Binding("portId", "portId"),
+                    go.GraphObject.make(
+                        go.Shape,
+                        "Rectangle",
+                        {
+                            stroke: null, strokeWidth: 0,
+                            desiredSize: portSize,
+                            margin: new go.Margin(0, 1)
+                        },
+                        new go.Binding("fill", "portColor")
+                    )
+                )
+            }
+        ),
 
-        // ================== COMPONENT BODY ==================
+
+        // ================== TOP PORT ARRAY ==================
         go.GraphObject.make(
             go.Panel,
             "Horizontal",
@@ -381,54 +449,20 @@ function renderConnectionDiagram(lscape, diagram) {
         ),
 
 
-        // ================== LEFT PORT ELEMENTS ==================
-        go.GraphObject.make(
-            go.Panel,
-            "Vertical",
-            new go.Binding("itemArray", "leftArray"),
-            {
-                row: 1,
-                column: 0,
-                itemTemplate: go.GraphObject.make(
-                    go.Panel,
-                    {
-                        _side: "left",
-                        fromSpot: go.Spot.Left,
-                        toSpot: go.Spot.Left,
-                        fromLinkable: true,
-                        toLinkable: true,
-                        cursor: "pointer"
-                        //contextMenu: portMenu
-                    },
-                    new go.Binding("portId", "portId"),
-                    go.GraphObject.make(
-                        go.Shape,
-                        "Rectangle",
-                        {
-                            stroke: null, strokeWidth: 0,
-                            desiredSize: portSize,
-                            margin: new go.Margin(0, 1)
-                        },
-                        new go.Binding("fill", "portColor")
-                    )
-                )
-            }
-        ),
-
-        // ================== TOP PORT ELEMENTS ==================
+        // ================== BOTTOM PORT ELEMENTS ==================
         go.GraphObject.make(
             go.Panel,
             "Horizontal",
-            new go.Binding("itemArray", "topArray"),
+            new go.Binding("itemArray", "bottomArray"),
             {
-                row: 0,
+                row: 2,
                 column: 1,
                 itemTemplate: go.GraphObject.make(
                     go.Panel,
                     {
                         _side: "bottom",
-                        fromSpot: go.Spot.Top,
-                        toSpot: go.Spot.Top,
+                        fromSpot: go.Spot.Bottom,
+                        toSpot: go.Spot.Bottom,
                         fromLinkable: true,
                         toLinkable: true,
                         cursor: "pointer"
@@ -483,57 +517,14 @@ function renderConnectionDiagram(lscape, diagram) {
             }
         ),
 
-        // ================= BOTTOM PORT ELEMENTS ==================
-        go.GraphObject.make(
-            go.Panel,
-            "Horizontal",
-            new go.Binding("itemArray", "bottomArray"),
-            {
-                row: 2,
-                column: 1,
-                itemTemplate: go.GraphObject.make(
-                    go.Panel,
-                    {
-                        _side: "bottom",
-                        fromSpot: go.Spot.Bottom,
-                        toSpot: go.Spot.Bottom,
-                        fromLinkable: true,
-                        toLinkable: true,
-                        cursor: "pointer"
-                        //contextMenu: portMenu
-                    },
-                    new go.Binding("portId", "portId"),
-                    go.GraphObject.make(
-                        go.Shape,
-                        "Rectangle",
-                        {
-                            stroke: null, strokeWidth: 0,
-                            desiredSize: portSize,
-                            margin: new go.Margin(0, 1)
-                        },
-                        new go.Binding("fill", "portColor")
-                    )
-                )
-            }
-        )
-    );
-
-    diagram.layout = go.GraphObject.make(
-        go.LayeredDigraphLayout,
-        {
-            direction: 90,
-            layerSpacing: 10,
-            columnSpacing: 15,
-            setsPortSpots: false
-        }
     );
 
     // an orthogonal link template, reshapable and relinkable
     diagram.linkTemplate = go.GraphObject.make(
-        CustomLink,
+        go.Link,
         {
             routing: go.Link.AvoidsNodes,
-            corner: 4,
+            corner: 10,
             curve: go.Link.JumpGap,
             reshapable: true,
             resegmentable: true,
@@ -550,26 +541,29 @@ function renderConnectionDiagram(lscape, diagram) {
         )
     );
 
-    const [graphNodes, graphLinks] = createConnectionNodesAndLinks(lscape);
+    diagram.layout = go.GraphObject.make(
+        go.LayeredDigraphLayout,
+        {
+            direction: 90,
+            layerSpacing: 10,
+            columnSpacing: 15,
+            setsPortSpots: false
+        }
+    );
+
+    const [graphNodes, graphLinks] = createConnectionNodesAndLinks(lscape, ui_overlay);
 
     console.log(graphNodes);
     console.log(graphLinks);
 
-    linkModel = go.GraphObject.make(
-        go.GraphLinksModel,
-        {
-            copiesArrays: true,
-            copiesArrayObjects: true,
-            linkFromPortIdProperty: "fromPort",
-            linkToPortIdProperty: "toPort",
-            nodeDataArray: graphNodes,
-            linkDataArray: graphLinks  // one link data, in an Array
-        }
-    );
+    linkModel = new go.GraphLinksModel(graphNodes, graphLinks);
+
+    linkModel.copiesArrays = true;
+    linkModel.copiesArrayObjects = true;
+    linkModel.linkFromPortIdProperty = "fromPort";
+    linkModel.linkToPortIdProperty = "toPort";
 
     diagram.model = linkModel;
-
-    diagram.requestUpdate();
 }
 
 Vue.component('physical-connections-viewer', {
@@ -592,7 +586,7 @@ Vue.component('physical-connections-viewer', {
             default: function() {
                 return {}
             }
-        } 
+        }
     },
     watch: {
         landscape: function(lscape) {
@@ -601,9 +595,29 @@ Vue.component('physical-connections-viewer', {
                 
                 var portSize = new go.Size(16, 16);
 
-                var diagram = new go.Diagram("diagramConnections");
+                diagram = new go.Diagram("diagramConnections");
 
-                renderConnectionDiagram(lscape, diagram);
+                diagram.grid = go.GraphObject.make(go.Panel, go.Panel.Grid,  // or "Grid"
+                    { gridCellSize: new go.Size(20, 20) },
+                    go.GraphObject.make(go.Shape, "LineH", { stroke: "olive" }),
+                    go.GraphObject.make(go.Shape, "LineV", { stroke: "olive" })
+                );
+
+                diagram.grid.visible = true;
+                diagram.toolManager.draggingTool.isGridSnapEnabled = true;
+                diagram.toolManager.resizingTool.isGridSnapEnabled = true;
+
+                diagram.toolManager.draggingTool.gridSnapCellSize = new go.Size(20, 20);
+
+                fetch_ui_overlay().then(
+                    ui_overlay => {
+                        createConnectionDiagram(lscape, diagram, ui_overlay);
+
+                        diagram.requestUpdate();
+                    }
+                );
+
+                
             }
         }
     },

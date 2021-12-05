@@ -80,7 +80,7 @@
                     mounted () {
                         var that = this;
 
-                        var qurl = "/api/1/landscape";
+                        var qurl = "/api/1/landscape/devices";
                         axios.get(qurl).then(
                             (response) => {
                                 that.landscape = response.data;
