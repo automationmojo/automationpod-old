@@ -14,7 +14,8 @@ TEMPLATE_MD_ICON = '<i class="material-icons">%s</i>'
 TEMPLATE_BS_ICON = '<b-icon icon="%s"></b-icon>'
 TEMPLATE_LINK = '<a href="%s">%s</a>'
 
-DIR_RESULTS = os.path.expanduser(context.lookup("/environment/configuration/paths/results"))
+DIR_TESTRESULTS = context.lookup("/configuration/paths/testresults")
+DIR_RESULTS = os.path.dirname(DIR_TESTRESULTS)
 
 MIME_TYPES = {
     ".css": "text/css",

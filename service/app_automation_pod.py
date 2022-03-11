@@ -4,11 +4,11 @@ import os
 
 os.environ["AKIT_SERVICE_NAME"] = "apod"
 
-import akit.environment.service
+import akit.activation.service
 
 from akit.coupling.upnpcoordinatorintegration import UpnpCoordinatorIntegration
 
-from akit.integration.landscaping.landscape import Landscape
+from akit.integration.landscaping.landscape import Landscape, startup_landscape
 
 
 from flask import Flask, url_for, g
@@ -62,25 +62,7 @@ def teardown_apoddb(obj):
 # When the landscape object is first created, it spins up in configuration
 # mode, which allows consumers consume and query the landscape configuration
 # information.
-lscape = Landscape()
-
-# Give the UpnpCoordinatorIntegration an opportunity to register itself, we are
-# doing this in this way to simulate test framework startup.
-UpnpCoordinatorIntegration.attach_to_framework(lscape)
-
-# After all the coordinators have had an opportunity to register with the
-# 'landscape' object, transition the landscape to the activated 'phase'
-lscape.transition_to_activation()
-
-# After we transition the the landscape to the activated phase, we give
-# the different coordinators such as the UpnpCoordinatorIntegration an
-# opportunity to attach to its environment and determine if the resources
-# requested and the resource configuration match
-UpnpCoordinatorIntegration.attach_to_environment()
-
-# Finalize the activation process and transition the landscape
-# to fully operational mode where all APIs are available.
-lscape.transition_to_operational(allow_missing_devices=True)
+lscape = startup_landscape(include_upnp=True)
 
 app.register_blueprint(redirect_apidoc)
 

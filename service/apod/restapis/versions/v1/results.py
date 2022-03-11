@@ -15,8 +15,8 @@ landscape = Landscape()
 
 RESULTS_NAMESPACE_PATH = "/results"
 
-DIR_RESULTS = os.path.expanduser(context.lookup("/environment/configuration/paths/results"))
-DIR_TESTRESULTS = os.path.join(DIR_RESULTS, "testresults")
+DIR_TESTRESULTS = context.lookup("/configuration/paths/testresults")
+DIR_RESULTS = os.path.dirname(DIR_TESTRESULTS)
 
 results_ns = Namespace("Results v1", description="APIs for information about results.")
 
