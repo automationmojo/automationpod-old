@@ -3,4 +3,5 @@ _local
 examples
 service/website/static/images/cached
 
+*.code-workspace
 *.pyc

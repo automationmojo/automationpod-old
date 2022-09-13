@@ -38,7 +38,7 @@ def generate_devemopment_env_file():
     if not os.path.exists(cache_dir):
         os.makedirs(cache_dir)
 
-    dev_env_file = os.path.join(cache_dir, "development.evn")
+    dev_env_file = os.path.join(cache_dir, "development.env")
     with open(dev_env_file, 'w') as envf:
         envf.write("PYTHONPATH={}/testroots:{}/packages:{}".format(
             REPOSITORY_FOLDER,
@@ -57,8 +57,8 @@ def generate_vscode_workspace_files():
     # Go through all of the VSCODE workspace templates and generate the 'code-workspace' files homed to the
     # location of this cloned repository
 
-    template_file = os.path.join(REPOSITORY_FOLDER, "akit.template")
-    workspace_file = os.path.join(REPOSITORY_FOLDER, "akit.code-workspace")
+    template_file = os.path.join(REPOSITORY_FOLDER, "apod.template")
+    workspace_file = os.path.join(REPOSITORY_FOLDER, "apod.code-workspace")
 
     print("Convereting Workspace Template:")
     print(template_file)
