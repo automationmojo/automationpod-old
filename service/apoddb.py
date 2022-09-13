@@ -3,7 +3,7 @@ from flask import g
 
 from sqlalchemy.orm import sessionmaker
 
-from akit.integration.landscaping.landscape import Landscape
+from akit.interop.landscaping.landscape import Landscape
 
 from akit.datum.dbconnection import lookup_database_connection_factory
 from akit.datum.dbio import open_apod_database

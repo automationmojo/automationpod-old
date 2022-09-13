@@ -7,8 +7,8 @@ from flask_restx import Namespace, Resource
 from flask_restx.reqparse import RequestParser
 
 from akit.environment.context import Context
-from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
-from akit.integration.landscaping.landscape import Landscape
+from akit.interop.coordinators.upnpcoordinator import UpnpCoordinator
+from akit.interop.landscaping.landscape import Landscape
 
 context = Context()
 landscape = Landscape()

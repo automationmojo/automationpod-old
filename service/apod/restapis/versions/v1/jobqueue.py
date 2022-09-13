@@ -9,8 +9,8 @@ from flask_restx import fields
 
 from akit.datum.orm import WorkPacket
 
-from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
-from akit.integration.landscaping.landscape import Landscape
+from akit.interop.coordinators.upnpcoordinator import UpnpCoordinator
+from akit.interop.landscaping.landscape import Landscape
 
 from apoddb import get_apoddb_session
 

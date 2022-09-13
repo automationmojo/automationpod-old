@@ -10,7 +10,7 @@ from flask_restx.reqparse import RequestParser
 from flask_restx import fields
 
 from akit.paths import get_filename_for_landscape
-from akit.integration.landscaping.landscape import Landscape
+from akit.interop.landscaping.landscape import Landscape
 
 from apod.paths import APodPaths
 from apod.web import try_download_icon_to_cache

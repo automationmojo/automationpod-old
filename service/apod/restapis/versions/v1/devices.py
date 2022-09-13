@@ -6,7 +6,7 @@ from flask_restx import Namespace, Resource
 from flask_restx.reqparse import RequestParser
 from flask_restx import fields
 
-from akit.integration.landscaping.landscape import Landscape
+from akit.interop.landscaping.landscape import Landscape
 
 from apod.paths import APodPaths
 from apod.web import try_download_icon_to_cache

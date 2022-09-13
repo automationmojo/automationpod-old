@@ -8,7 +8,7 @@ import akit.activation.service
 
 from akit.coupling.upnpcoordinatorintegration import UpnpCoordinatorIntegration
 
-from akit.integration.landscaping.landscape import Landscape, startup_landscape
+from akit.interop.landscaping.landscape import Landscape, startup_landscape
 
 
 from flask import Flask, url_for, g
