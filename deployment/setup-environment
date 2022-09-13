@@ -9,8 +9,11 @@ echo "------------------------------------ VARIABLES ---------------------------
 THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 REPOSITORY_DIR="$( dirname $THIS_DIR )"
 
+PYVER=$(python3 -c 'import platform; print("python{}.{}".format(*(platform.python_version_tuple()[:2])))')
+
 echo "THIS_DIR=$THIS_DIR"
 echo "REPOSITORY_DIR=$REPOSITORY_DIR"
+echo "PYVER=$PYVER"
 
 # Setup our local directory
 CACHE_DIR="$REPOSITORY_DIR/.cache"
@@ -34,7 +37,7 @@ if [ ! -f $DEV_ENV_FILE ]; then
     REPOSITORY_DIRECTORY="$REPOSITORY_DIR"
     REPORT_PREFIX="akit"
     DEVELOPER_MODE="TRUE"
-    PYTHONPATH="$REPOSITORY_DIRECTORY/packages:$REPOSITORY_DIRECTORY/service"
+    PYTHONPATH="$REPOSITORY_DIRECTORY/packages:$REPOSITORY_DIRECTORY/service:$REPOSITORY_DIRECTORY/.venv/lib/$PYVER/site-packages"
 fi
 echo "---------------------------------------------------------------------------------------"
 
@@ -61,35 +64,35 @@ if [ ! -f $INITIALIZED_FILE ]; then
         source $VIRTUAL_ENV_DIR/bin/activate
 
         # MSCODE Environment Dependencies
-        pip install pylint
+        pip3 install pylint
 
         # Install pylint into the virtual environment
-        pip install coverage
-        pip install netifaces
-        pip install paramiko
-        pip install psycopg2
-        pip install requests
-        pip install sqlalchemy
-        pip install sqlalchemy_utils
-        pip install ssdp
+        pip3 install coverage
+        pip3 install netifaces
+        pip3 install paramiko
+        pip3 install psycopg2
+        pip3 install requests
+        pip3 install sqlalchemy
+        pip3 install sqlalchemy_utils
+        pip3 install ssdp
 
         # Website and REST service dependencies
-        pip install gunicorn
-        pip install werkzeug
-        pip install jinja2
-        pip install flask
-        pip install flask-migrate
-        pip install flask-restx
+        pip3 install gunicorn
+        pip3 install werkzeug
+        pip3 install jinja2
+        pip3 install flask
+        pip3 install flask-migrate
+        pip3 install flask-restx
 
         # git repository dependencies
         if [ -f $REPO_REQUIREMENTS_FILE ]; then
-                pip install -r $REPO_REQUIREMENTS_FILE
+                pip3 install -r $REPO_REQUIREMENTS_FILE
         else
-                pip install git+https://github.com/automationmojo/automationkit.git
+                pip3 install git+https://github.com/automationmojo/automationkit.git
         fi
 
         # Install dependencies into the virtual environment
-        pip install -r $REQUIREMENTS_FILE
+        pip3 install -r $REQUIREMENTS_FILE
 
         touch $INITIALIZED_FILE
 
